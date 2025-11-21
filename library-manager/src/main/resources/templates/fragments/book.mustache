@@ -1,0 +1,56 @@
+<div class="book-container">
+    <div class="book-cover">
+        <img src="{{imglink}}" alt="{{title}} cover">
+    <div class="book-actions">
+        {{#isLiked}}
+        <form method="get" action="/book/{{isbn}}/like/false">
+            <button class="fa fa-heart"></button>
+        </form>
+        {{/isLiked}}
+        {{^isLiked}}
+        <form method="get" action="/book/{{isbn}}/like/true">
+            <button class="far fa-heart"></button>
+        </form>
+        {{/isLiked}}
+
+        {{#isWishlisted}}
+        <form method="get" action="/book/{{isbn}}/bookmark/false">
+            <button class="fa fa-bookmark"></button>
+        </form>
+        {{/isWishlisted}}
+        {{^isWishlisted}}
+        <form method="get" action="/book/{{isbn}}/bookmark/true">
+            <button class="far fa-bookmark"></button>
+        </form>
+        {{/isWishlisted}}    
+    </div>
+
+    </div>
+
+    <div class="book-details">
+        <h1 class="book-title">{{title}}</h1>
+
+        <div class="book-authors">
+            {{#authors}}
+                <span class="authorname">{{authorname}}</span>{{^last}}, {{/last}}
+            {{/authors}}
+        </div>
+
+        <div class="book-category">
+            <strong>Category:</strong> {{category}}
+        </div>
+
+        <div class="book-rating">
+            <strong>Rating:</strong> {{rating}}
+        </div>
+
+        <div class="book-release">
+            <strong>Publish Date:</strong> {{publishDate}}
+        </div>
+
+        <div class="book-description">
+            <strong>Description:</strong> {{description}}
+        </div>
+
+    </div>
+</div>
