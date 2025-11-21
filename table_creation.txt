@@ -1,3 +1,5 @@
+database name: library_manager
+
 CREATE TABLE `user` (
 userId 		INT AUTO_INCREMENT NOT NULL,
 username 	VARCHAR(50) NOT NULL UNIQUE,
@@ -127,6 +129,7 @@ fk: bookId refers book(bookId)
 ExpandedBook(String isbn, String title, List<Author> authors, String imglink,
             String category, String publishDate, String description,
             float rating, boolean liked, boolean wishlisted, int numRatings, int numPages) {
+
 
 
 
