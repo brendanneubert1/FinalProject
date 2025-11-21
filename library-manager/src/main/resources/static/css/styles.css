@@ -312,24 +312,95 @@ nav a:hover {
 
 
 
-/* Browse page layout */
+/* ===== Browse Layout ===== */
+.container.browse-layout {
+    max-width: 1200px;
+    margin: 24pt auto;
+
+}
+
 .browse-layout {
-    display: flex;
-    gap: 20px;
-    max-width: 1300px;
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-top: 1.5rem;
 }
 
-/* left filter sidebar */
+/* ===== Filter panel (left) ===== */
 .browse-filters {
-    width: 200px;
-    padding: 15px;
-    background: #f7f7f7;
-    border-radius: 10px;
+  flex: 0 0 260px;
+  background: #f7f7f9;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e1e4eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-/* main content area */
-.browse-results {
-    flex: 1;
+/* Each filter row */
+.filter-box {
+  margin-bottom: 1rem;
+}
+
+.filter-box label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: #333;
+}
+
+/* Text inputs + select */
+.filter-input,
+.browse-filters input[type="text"],
+.browse-filters select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5de;
+  font-size: 0.9rem;
+  outline: none;
+  background-color: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filter-input:focus,
+.browse-filters input[type="text"]:focus,
+.browse-filters select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Slider */
+.browse-filters input[type="range"] {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+/* Apply button */
+.filter-button {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 999px;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.filter-button:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+
+.filter-button:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 /* instead of a grid, make it a clean vertical list */
@@ -341,7 +412,6 @@ nav a:hover {
 
 .books-grid .book-container {
     width: 100%;
-    max-width: 1100px;
     margin: 0 auto 24px auto;
     padding: 20px 30px;
 }

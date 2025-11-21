@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -121,6 +122,9 @@ public class BookService {
         if (size <= 0) size = 10;
         if (page <= 0) page = 1;
 
+        if (author == "") {author = null; }
+        if (category == "") {category = null; }
+
         int offset = (page - 1) * size;
 
         // COUNT total books
@@ -149,7 +153,7 @@ public class BookService {
 
         // PAGE QUERY BOOKS ONLY 
         final String booksSql = """
-SELECT 
+SELECT DISTINCT
     b.isbn,
     b.title,
     b.imglink,
@@ -160,10 +164,15 @@ SELECT
     b.num_ratings,
     b.num_pages
 FROM book b
-WHERE (? = "title" OR b.title = ?) AND (? = "category" OR b.category = ?) AND b.rating > ?
+LEFT JOIN written_by wb ON b.isbn = wb.bookId
+LEFT JOIN author a ON wb.authorId = a.authorId
+WHERE (? IS NULL OR b.title LIKE CONCAT('%', ?, '%'))
+  AND (? IS NULL OR b.category LIKE CONCAT('%', ?, '%'))
+  AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%'))
+  AND b.rating > ?
 ORDER BY b.title
 LIMIT ? OFFSET ?;
-            """;
+""";
 
         Map<String, ExpandedBook> map = new LinkedHashMap<>();
 
@@ -171,14 +180,16 @@ LIMIT ? OFFSET ?;
 
         try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(booksSql)) {
-
-            stmt.setString(1, title);
+            
+            if (title == "") {stmt.setNull(1, Types.VARCHAR);} else {stmt.setString(1, title);}
             stmt.setString(2, title);
-            stmt.setString(3, category);
+            if (category == "") {stmt.setNull(3, Types.VARCHAR);} else {stmt.setString(3, category);}
             stmt.setString(4, category);
-            stmt.setFloat(5, minRating);
-            stmt.setInt(6, size);
-            stmt.setInt(7, offset);
+            if (author == "") {stmt.setNull(5, Types.VARCHAR);} else {stmt.setString(5, author);}
+            stmt.setString(6, author);
+            stmt.setFloat(7, minRating);
+            stmt.setInt(8, size);
+            stmt.setInt(9, offset);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -224,13 +235,13 @@ LIMIT ? OFFSET ?;
 
         // Get authors for the books
         String placeholders = String.join(",", java.util.Collections.nCopies(pageIsbns.size(), "?"));
-        String a = "\"author\"";
+
         String authorsSql = 
         "SELECT wb.bookId, a.authorId, a.name AS author_name " + 
         "FROM written_by wb " +
         "JOIN author a ON wb.authorId = a.authorId " +
         "WHERE wb.bookId IN (" + placeholders + ")" +
-        "AND (? = " + a +" OR a.name = ?); ";
+        " AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%')); ";
 
         try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(authorsSql)) {
@@ -239,7 +250,7 @@ LIMIT ? OFFSET ?;
             for (String isbn : pageIsbns) {
                 stmt.setString(index++, isbn);
             }
-            stmt.setString(index++, author);
+            if (author == "") {stmt.setNull(index++, Types.VARCHAR);} else {stmt.setString(index++, author);}
             stmt.setString(index++, author);
 
             try (ResultSet rs = stmt.executeQuery()) {

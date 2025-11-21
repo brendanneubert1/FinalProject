@@ -55,13 +55,13 @@ public class BrowseController {
             size = 10;
         }
         if (title == null) {
-            title = "title";
+            title = "";
         }
         if (author == null) {
-            author = "name";
+            author = "";
         }
         if (category == null) {
-            category = "category";
+            category = "";
         }
         if (minRating == null) {
             minRating = 0.0f;
