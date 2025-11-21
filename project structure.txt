@@ -1,24 +1,24 @@
 BOOK OBJECT:
-	each book has a title, pic, author, category, release date, description, rating
+	each book has a title, pic, author, numpages, category, release date, description, rating, numratings
 USER OBJECT:
 	each user has fname, lname, username, password
-	can leave reviews and likes
-	user can leave reviews, and like/dislikes
+	can leave reviews and likes and wishlist books
 	user can follow other users
-	user can wishlist books
 	user can look at others' profiles
+	user can mark books ar read (read books will show up on profile)
 
 REVIEW OBJECT:
-	show book, commenter, liked/disliked, text
+	show book, reviewer, rating, liked/disliked, text
+	reviewing book marks it as read
 
 
 
 ATTRIBUTES:
-USERNAME FNAME LNAME PASSWORD ISBN PIC TITLE AUTHOR CATEGORY DESCRIPTION YEAR RATING LIKED/DISLIKED REVIEW(static?) WISHLISTED FOLLOWEDBY 
+USERNAME FNAME LNAME PASSWORD ISBN INGLINK TITLE AUTHOR CATEGORY NUMPAGES DESCRIPTION YEAR RATING NUMRATINGS LIKED REVIEWTEXT REVIEWED_DATE WISHLISTED FOLLOWEDBY, READ 
 
 
 ACTIONS:
-Like, Review, Wishlist, Follow People, Search By Author/Title
+Like, Review, Wishlist, Follow People, Search By Author/Title/Rating
 
 
 
@@ -26,14 +26,14 @@ HOMEPAGE:
 show followers' reviews and allow user to click on each book reviewed
 
 SEARCH PAGE:
-Allow user to search for book by title, author, isbn? (could have a selector to switch search types)
-Allow user to filter by title or rating highest/lowest
+Allow user to search for book by title, author, rating
+Allow user to filter by title or rating highest/lowest?
 
 USER PAGE:
-Show reviews from a certain user and their wishlist
+Show reviews from a certain user and their wishlist/ read books
 
 PROFILE PAGE:
-Show user's own reviews and wishlist
+Show user's own reviews and wishlist and read books
 
 
 
