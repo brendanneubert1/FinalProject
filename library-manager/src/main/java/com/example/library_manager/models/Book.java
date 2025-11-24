@@ -49,47 +49,68 @@ public class Book {
     private final float rating;
 
     /**
-     * Whether the logged-in user has liked this book.
+     * Number of ratings the book has received.
      */
-    private final boolean liked;
+    private final int numRatings;
+
+    /**
+     * Number of likes for this book.
+     */
+    private final int heartsCount;
+
+    /**
+     * Number of hearts for this book.
+     */
+    private final boolean isHearted;
+
+    /**
+     * Whether the logged-in user has wishlisted this book.
+     */
+    private final boolean isWishlisted;
+
+    /**
+     * Whether the logged-in user has read this book.
+     */
+    private final boolean isRead;
+
+    /**
+     * Whether to show description
+     */
+    private boolean showdesc;
 
     /**
      * Constructs a User with specified details.
      *
-     * @param isbn        the unique identifier of the book
-     * @param title       title of the book
-     * @param author      author of the book
-     * @param imglink    link to the book cover image
-     * @param img BufferedImage of the book cover
-     * @param category Category of the book
-     * @param publishDate Publish date of the book
-     * @param rating Rating of the book
-     * @param liked Whether the logged-in user has liked this book
+     * @param isbn          the unique identifier of the book
+     * @param title         title of the book
+     * @param author        author of the book
+     * @param imglink       link to the book cover image
+     * @param category      Category of the book
+     * @param publishDate   Publish date of the book
+     * @param rating        Rating of the book
+     * @param numRatings    Number of ratings the book has received
+     * @param heartsCount   Number of likes for this book
+     * @param isHearted     Whether the logged-in user has liked this book
+     * @param isWishlisted  Whether the logged-in user has wishlisted this book
+     * @param isRead        Whether the logged-in user has read this book
+     * @param showdesc      Whether to show description
      */
-    public Book(String isbn, String title, List<Author> authors, String imglink, BufferedImage img, String category, String publishDate, float rating, boolean liked) {
+    public Book(String isbn, String title, List<Author> authors, String imglink, String category, String publishDate, float rating,
+                int numRatings, int heartsCount, boolean isHearted, boolean isWishlisted, boolean isRead)
+    {
         this.isbn = isbn;
         this.title = title;
         this.authors = authors;
         this.imglink = imglink;
         this.category = category;
-        this.publishDate = publishDate;
+        this.publishDate = publishDate != null ? publishDate : "N/A";
         this.rating = rating;
-        this.liked = liked;
-    }
-
-    /**
-     * Constructs a User with specified details.
-     *
-     * @param isbn        the unique identifier of the book
-     * @param author      author of the book
-     * @param imglink    link to the book cover image
-     * @param category Category of the book
-     * @param publishDate Publish date of the book
-     * @param rating Rating of the book
-     */
-    public Book(String isbn, String title, List<Author> authors, String imglink, String category, String publishDate, float rating, boolean liked) {
-
-        this(isbn, title, authors, imglink, getImg(isbn), category, publishDate !=null ? publishDate : "N/A", rating, liked);
+        this.numRatings = numRatings;
+        this.heartsCount = heartsCount;
+        this.isHearted = isHearted;
+        this.isWishlisted = isWishlisted;
+        this.isRead = isRead;
+        this.showdesc = false;
     }
 
 
@@ -100,16 +121,6 @@ public class Book {
      */
     public void setAuthors(List<Author> authors) {
         this.authors = authors;
-    }
-
-
-
-    /**
-     * Given an isbn, get img of the book.
-     */
-    private static BufferedImage getImg(String isbn) {
-        // Placeholder for image retrieval logic
-        return null;
     }
 
     public String getIsbn() {
@@ -135,7 +146,22 @@ public class Book {
     public float getRating() {
         return rating;
     }
-    public int isLiked() {
-        return liked ? 1 : 0;
+    public int getHeartsCount() {
+        return heartsCount;
+    }
+    public boolean isHearted() {
+        return isHearted;
+    }
+    public boolean isWishlisted() {
+        return isWishlisted;
+    }
+    public boolean isRead() {
+        return isRead;
+    }
+    public boolean isShowdesc() {
+        return showdesc;
+    }
+    public int getNumRatings() {
+        return numRatings;
     }
 }

@@ -1,0 +1,24 @@
+        <div class="pagination">
+
+            {{#hasPrev}}
+                <a class="pagination-button"
+                   href="/browse?page={{prevPage}}&size={{size}}&title={{title}}&author={{author}}&category={{category}}&minRating={{minRating}}">
+                    &laquo; Prev
+                </a>
+            {{/hasPrev}}
+
+            {{#pages}}
+                <a class="pagination-number {{#current}}active{{/current}}"
+                   href="/browse?page={{number}}&size={{size}}&title={{title}}&author={{author}}&category={{category}}&minRating={{minRating}}">
+                    {{number}}
+                </a>
+            {{/pages}}
+
+            {{#hasNext}}
+                <a class="pagination-button"
+                   href="/browse?page={{nextPage}}&size={{size}}&title={{title}}&author={{author}}&category={{category}}&minRating={{minRating}}">
+                    Next &raquo;
+                </a>
+            {{/hasNext}}
+
+        </div>

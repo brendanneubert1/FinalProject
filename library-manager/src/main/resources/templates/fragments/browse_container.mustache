@@ -1,0 +1,11 @@
+    <main class="browse-results">
+
+        <div class="books-grid">
+            {{#books}}
+                {{> fragments/book}}
+            {{/books}}
+
+            {{^books}}
+                <p>No books found.</p>
+            {{/books}}
+        </div>

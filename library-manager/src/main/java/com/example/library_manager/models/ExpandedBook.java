@@ -10,9 +10,6 @@ public class ExpandedBook extends Book {
      * Number of times the book has been wishlisted.
      */
     private final String description;
-    private final boolean liked;
-    private final boolean wishlisted;
-    private final int numRatings;
     private final int numPages;
 
 
@@ -27,19 +24,24 @@ public class ExpandedBook extends Book {
      * @param publishDate   publish date of the book
      * @param description   description of the book
      * @param rating        rating of the book
-     * @param liked         whether the logged-in user has liked this book
+     * @param numRatings    number of ratings the book has received
+     * @param likesCount    Number of likes for this book
+     * @param heartsCount   Number of likes for this book
+     * @param isHearted     Whether the logged-in user has liked this book
+     * @param isWishlisted  Whether the logged-in user has wishlisted this book
+     * @param isRead        Whether the logged-in user has read this book
+     * @param showdesc     Whether to show description
      * @param wishlisted    number of times the book has been wishlisted
      * @param numRatings    number of ratings the book has received
      * @param numPages     number of pages in the book
      */
-    public ExpandedBook(String isbn, String title, List<Author> authors, String imglink,
-            String category, String publishDate, String description,
-            float rating, boolean liked, boolean wishlisted, int numRatings, int numPages) {
-        super(isbn, title, authors, imglink, category, publishDate != null ? publishDate : "N/A", rating, liked);
+    public ExpandedBook(String isbn, String title, List<Author> authors, String imglink, String category, String publishDate, float rating,
+                        int numRatings, int heartsCount, boolean isHearted, boolean isWishlisted, boolean isRead, int numPages, String description) {
+        
+        super(isbn, title, authors, imglink, category, publishDate, rating,
+                numRatings, heartsCount, isHearted, isWishlisted, isRead);
+        
         this.description = description;
-        this.liked = liked;
-        this.wishlisted = wishlisted;
-        this.numRatings = numRatings;
         this.numPages = numPages;
 
     }
@@ -49,9 +51,6 @@ public class ExpandedBook extends Book {
      *
      * @return the wishlist count
      */
-    public int isWishlisted() {
-        return wishlisted ? 1 : 0;
-    }
 
     /**
      * Returns the description of the book.
@@ -61,8 +60,7 @@ public class ExpandedBook extends Book {
     public String getDescription() {
         return description;
     }
-
-    public int isLiked() {
-        return liked ? 1 : 0;
-    }
+    public int getNumPages() {
+    return numPages;
+}
 }

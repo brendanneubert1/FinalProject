@@ -59,12 +59,10 @@ public class BookController {
         // See notes on ModelAndView in BookmarksController.java.
         ModelAndView mv = new ModelAndView("books_page");
 
-        // Following line populates sample data.
-        // You should replace it with actual data from the database.
-        //List<ExpandedPost> posts = Utility.createSampleExpandedPostWithComments();
-        //List<Book> books = bookService.getBooks(userService.getLoggedInUser().getUserId(), bookId);
-        List<ExpandedBook> books = bookService.testExpandedBooks();
+        // TODO: get a book by isbn
 
+        //ExpandedBook book = bookService.getExpandedBookByIsbn(bookId);
+        List<ExpandedBook> books = null;
         mv.addObject("books", books);
 
         // If an error occured, you can set the following property with the
@@ -93,7 +91,7 @@ public class BookController {
      * See comments in PeopleController.java in followUnfollowUser function regarding 
      * get type form submissions and how path variables work.
      */
-    @GetMapping("/{bookId}/heart/{isAdd}")
+    @GetMapping("/{bookId}/like/{isAdd}")
     public String addOrRemoveHeart(@PathVariable("bookId") String bookId,
             @PathVariable("isAdd") Boolean isAdd) throws SQLException{
         System.out.println("The user is attempting add or remove a heart:");
@@ -137,6 +135,32 @@ public class BookController {
 
         // Redirect the user with an error message if there was an error.
         String message = URLEncoder.encode("Failed to (un)bookmark the book. Please try again.",
+                StandardCharsets.UTF_8);
+        return "redirect:/book/" + bookId + "?error=" + message;
+    }
+
+    /**
+     * Handles marking books as read.
+     * See comments on webpage function to see how path variables work here.
+     * See comments in PeopleController.java in followUnfollowUser function regarding 
+     * get type form submissions.
+     */
+    @GetMapping("/{bookId}/read/{isAdd}")
+    public String markOrUnmarkRead(@PathVariable("bookId") String bookId,
+            @PathVariable("isAdd") Boolean isAdd) throws SQLException{
+        System.out.println("The user is attempting mark or unmark a book as read:");
+        System.out.println("\tbookId: " + bookId);
+        System.out.println("\tisAdd: " + isAdd);
+
+        // Redirect the user if the comment adding is a success.
+        // return "redirect:/post/" + postId;
+        boolean success = bookService.markBookAsRead(userService.getLoggedInUser().getUserId(), bookId);
+        if (success) {
+            return "redirect:/book/" + bookId;
+        }
+
+        // Redirect the user with an error message if there was an error.
+        String message = URLEncoder.encode("Failed to (un)mark the book as read. Please try again.",
                 StandardCharsets.UTF_8);
         return "redirect:/book/" + bookId + "?error=" + message;
     }

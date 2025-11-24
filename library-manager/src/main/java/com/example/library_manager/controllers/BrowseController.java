@@ -16,9 +16,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.example.library_manager.services.UserService;
 import com.example.library_manager.services.BookService;
+import com.example.library_manager.services.BrowseService;
 import com.example.library_manager.models.Book;
 import com.example.library_manager.models.ExpandedBook;
 import com.example.library_manager.models.BrowseResult; 
+
 
 
 
@@ -27,12 +29,14 @@ import com.example.library_manager.models.BrowseResult;
 public class BrowseController {
     private final BookService bookService;
     private final UserService userService;
+    private final BrowseService browseService;
 
 
     @Autowired
-    public BrowseController(BookService bookService, UserService userService) {
+    public BrowseController(BookService bookService, UserService userService, BrowseService browseService) {
         this.bookService = bookService;
         this.userService = userService;
+        this.browseService = browseService;
     }
 
 
@@ -68,7 +72,7 @@ public class BrowseController {
         }
 
         
-        BrowseResult result = bookService.getBrowsePage(page,size,title, author, category, minRating);
+        BrowseResult result = browseService.getBrowsePage(userService.getLoggedInUser().getUserId(), page,size,title, author, category, minRating);
 
         ModelAndView mv = new ModelAndView("browse_page");
         mv.addObject("books", result.getBooks());

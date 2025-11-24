@@ -46,7 +46,7 @@ public class HomeController {
         // Following line populates sample data.
         // You should replace it with actual data from the database.
         String loggedinUser = userService.getLoggedInUser().getUserId();
-        List<ExpandedBook> books = bookService.testExpandedBooks();
+        //List<ExpandedBook> books = bookService.testExpandedBooks();
 
         // If an error occured, you can set the following property with the
         // error message to show the error message to the user.

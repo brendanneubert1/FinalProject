@@ -282,6 +282,10 @@ nav a:hover {
     line-height: 1.6;
 }
 
+.fa-book-open {
+    opacity: 0.6;
+}
+
 .book-actions {
     display: flex;
     gap: 10px;               
@@ -306,6 +310,16 @@ nav a:hover {
 
 .book-actions button:hover {
     transform: scale(1.15);
+}
+
+.rating-value {
+    font-weight: 600;
+}
+
+.ratings-count {
+    color: #999;          
+    margin-left: 4px;     
+    font-size: 0.85em;    
 }
 
 
