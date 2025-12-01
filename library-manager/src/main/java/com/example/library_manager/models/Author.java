@@ -33,12 +33,7 @@ public class Author {
 
     }
 
-    /**
-     * Given an isbn, get img of the book.
-     */
-
-    private String getAuthorname() {
-        // Placeholder for image retrieval logic
+    public String getAuthorName() {
         return this.authorname;
     }
 }

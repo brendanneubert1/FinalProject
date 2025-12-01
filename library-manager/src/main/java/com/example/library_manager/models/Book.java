@@ -3,6 +3,8 @@ package com.example.library_manager.models;
 import java.awt.image.BufferedImage;
 import java.sql.Date;
 import java.util.List;
+import com.example.library_manager.models.Author;
+import java.util.ArrayList;
 
 /**
  * Represents a user of the micro blogging platform.
@@ -131,8 +133,17 @@ public class Book {
         return title;
     }
 
-    public List<Author> getAuthors() {
-        return authors;
+    public String getAuthors() {
+        List<String> authorlist = new ArrayList<String>();
+        for(Author a : authors) {
+            String name = a.getAuthorName();
+            authorlist.add(name);
+        }
+        String result = String.join(", ", authorlist); 
+        return result;
+    }
+    public List<Author> getAuthorObjs() {
+        return this.authors;
     }
     public String getImglink() {
         return imglink;

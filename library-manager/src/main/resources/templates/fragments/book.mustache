@@ -43,9 +43,7 @@
         <h1 class="book-title">{{title}}</h1>
 
         <div class="book-authors">
-            {{#authors}}
-                <span class="authorname">{{authorname}}</span>{{^last}}, {{/last}}
-            {{/authors}}
+                <span class="authorname">{{getAuthors}}</span>
         </div>
 
         <div class="book-category">
