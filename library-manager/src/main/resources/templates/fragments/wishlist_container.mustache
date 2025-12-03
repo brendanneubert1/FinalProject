@@ -1,0 +1,13 @@
+<section class="profile-section">
+        <h2>Wishlisted Books</h2>
+
+        {{#wishlistedbooks}}
+            <div class="book-card">
+                {{> fragments/book}}
+            </div>
+        {{/wishlistedbooks}}
+
+        {{^wishlistedbooks}}
+            <p>You don't have any books in your wishlist yet.</p>
+        {{/wishlistedbooks}}
+    </section>

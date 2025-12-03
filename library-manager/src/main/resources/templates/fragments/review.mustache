@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+
+<body>
+
+{{> fragments/title}}
+{{> fragments/top_bar}}
+
+<div class="container review-page">
+
+    <!-- ===== REVIEW HEADER ===== -->
+    <header class="review-header">
+        <h1>Review by {{userName}}</h1>
+        <div class="review-meta">
+            <span class="review-rating">Rating: {{rating}} / 5</span>
+            <span class="review-date">· {{reviewDate}}</span>
+        </div>
+    </header>
+
+    <hr>
+
+    <!-- ===== BOOK FRAGMENT ===== -->
+    <section class="review-book">
+        {{> fragments/simple_book }}
+    </section>
+
+    <hr>
+
+    <!-- ===== REVIEW CONTENT ===== -->
+    <section class="review-content">
+        <h2>Review</h2>
+        <p class="review-text">
+            {{reviewText}}
+        </p>
+    </section>
+
+</div>
+
+</body>
+</html>

@@ -157,7 +157,6 @@ public class BrowseService {
                 }
             }
         }
-
         // return empty if no books in page
         if (pageIsbns.isEmpty()) {
             return new BrowseResult(
@@ -172,8 +171,6 @@ public class BrowseService {
                     List.of()
             );
         }
-
-
         // Get authors for the books
         String placeholders = String.join(",", java.util.Collections.nCopies(pageIsbns.size(), "?"));
 

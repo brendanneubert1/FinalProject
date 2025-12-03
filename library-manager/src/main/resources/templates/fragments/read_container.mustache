@@ -1,0 +1,13 @@
+ <section class="profile-section">
+        <h2>Read Books</h2>
+
+        {{#readbooks}}
+            <div class="book-card">
+                {{> fragments/book}}
+            </div>
+        {{/readbooks}}
+
+        {{^readbooks}}
+            <p>You haven't read any books yet.</p>
+        {{/readbooks}}
+    </section>

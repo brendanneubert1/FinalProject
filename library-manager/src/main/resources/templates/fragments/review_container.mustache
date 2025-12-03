@@ -1,0 +1,13 @@
+ <section class="profile-section">
+        <h2>Reviewed Books</h2>
+
+        {{#reviews}}
+            <div class="book-card">
+                {{> fragments/book}}
+            </div>
+        {{/reviews}}
+
+        {{^reviews}}
+            <p>No reviewed books.</p>
+        {{/reviews}}
+    </section>
