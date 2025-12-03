@@ -133,7 +133,7 @@ public class Book {
         return title;
     }
 
-    public String getAuthors() {
+    public String getAuthorsString() {
         List<String> authorlist = new ArrayList<String>();
         for(Author a : authors) {
             String name = a.getAuthorName();
@@ -142,7 +142,7 @@ public class Book {
         String result = String.join(", ", authorlist); 
         return result;
     }
-    public List<Author> getAuthorObjs() {
+    public List<Author> getAuthors() {
         return this.authors;
     }
     public String getImglink() {
