@@ -322,6 +322,25 @@ nav a:hover {
     font-size: 0.85em;    
 }
 
+.authorname::after {
+    content: ", ";
+}
+
+.authorname:last-child::after {
+    content: "";
+}
+
+.browselink {
+    color: inherit;       
+    text-decoration: none; 
+    cursor: pointer;       
+}
+
+.browselink:hover {
+    text-decoration: underline;  
+    opacity: 0.8;                
+}
+
 
 
 

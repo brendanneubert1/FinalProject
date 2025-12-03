@@ -36,4 +36,7 @@ public class Author {
     public String getAuthorName() {
         return this.authorname;
     }
+    public int getAuthorId() {
+        return this.authorId;
+    }
 }

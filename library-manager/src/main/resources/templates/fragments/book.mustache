@@ -43,11 +43,15 @@
         <h1 class="book-title">{{title}}</h1>
 
         <div class="book-authors">
-                <span class="authorname">{{getAuthors}}</span>
+            {{#authors}}
+                <a class="authorname browselink" href="/browse?page=1&title=&author={{authorname}}&category=&minRating=0&size=10">
+                {{authorname}}</a>
+            {{/authors}}
         </div>
 
         <div class="book-category">
-            <strong>Category:</strong> {{category}}
+            <strong>Category:</strong>
+            <a class= "browselink" href="/browse?page=1&title=&author=&category={{category}}&minRating=0&size=10">{{category}} </a>
         </div>
 
         <div class="book-pages">

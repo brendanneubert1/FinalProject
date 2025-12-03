@@ -2,6 +2,9 @@ package com.example.library_manager.models;
 
 import com.example.library_manager.models.Book;
 import com.example.library_manager.models.ExpandedBook;
+import java.time.LocalDateTime;
+
+
 /**
  * Represents a review made by a user for a book.
  */
@@ -14,6 +17,7 @@ public class Review {
     private Book book;
     private String content;
     private int rating;
+    private LocalDateTime reviewDate;
 
 
 
@@ -47,5 +51,8 @@ public class Review {
     }
     public int getRating() {
         return rating;
+    }
+    public LocalDateTime getReviewDate() {
+        return reviewDate;
     }
 }

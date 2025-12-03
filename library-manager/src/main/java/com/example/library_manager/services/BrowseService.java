@@ -197,7 +197,7 @@ public class BrowseService {
 
                     ExpandedBook book = map.get(bookId);
                     if (book != null) {
-                        book.getAuthorObjs().add(new Author(
+                        book.getAuthors().add(new Author(
                                 rs.getInt("authorId"),
                                 rs.getString("author_name")
                         ));
