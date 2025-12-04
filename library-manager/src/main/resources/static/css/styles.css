@@ -1,0 +1,486 @@
+/**
+Copyright (c) 2024 Sami Menik, PhD. All rights reserved.
+
+This is a project developed by Dr. Menik to give the students an opportunity to apply database concepts learned in the class in a real world project. Permission is granted to host a running version of this software and to use images or videos of this work solely for the purpose of demonstrating the work to potential employers. Any form of reproduction, distribution, or transmission of the software's source code, in part or whole, without the prior written consent of the copyright owner, is strictly prohibited.
+*/
+
+:root{
+    --normal-text-color: #14171a;
+    --frame-color: #98b1c6;
+    --box-color: #fff;
+    --action-item-color: #657786;
+    --highlight-color: #1da1f2;
+}
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: var(--normal-text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+nav {
+    background: var(--box-color);
+    padding: 16pt 0;
+    text-align: left;
+}
+nav a {
+    text-decoration: none;
+    margin-right: 16pt;
+    color: var(--normal-text-color);;
+    font-weight: bold;
+    display: inline-block;
+}
+nav a:hover {
+    color: var(--highlight-color);
+}
+.framed {
+    border: 0.8pt solid var(--frame-color);
+    border-radius: 4pt;
+}
+.separator-bottom {
+    border-bottom: 0.8pt solid var(--frame-color);
+}
+.title-bar {
+    font-size: 12pt;
+    color: var(--action-item-color);
+    padding: 8pt 0;
+    text-align: left;
+}
+.title-bar form {
+    display: inline-block;
+    margin-left: 8pt;
+}
+.action-button {
+    /* background-color: #657786; */
+    background-color: var(--box-color);;
+    color: var(--action-item-color);
+    border: 1.2pt solid var(--action-item-color);
+    border-radius: 16pt;
+    padding: 8pt 16pt;
+    cursor: pointer;
+}
+.action-button:hover {
+    color: var(--highlight-color);
+    border: 1.2pt solid var(--highlight-color);
+}
+.short-input {
+    padding: 8pt 16pt;
+    margin: 8pt;
+    border: 0.8pt solid var(--action-item-color);
+    border-radius: 16pt;
+}
+.short-input:hover {
+    border: 1.2pt solid var(--highlight-color);
+}
+.short-input.full {
+    width: calc(100% - 32pt);
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+.content-center {
+    max-width: 480pt;
+    margin: 0 auto;
+}
+.container {
+    max-width: 480pt;
+    margin: 24pt auto;
+    background-color: var(--box-color);
+    border-radius: 4pt;
+}
+.container.narrow {
+    max-width: 300pt;
+}
+.center-align{
+    text-align: center;
+}
+.post-form textarea {
+    width: calc(100% - 16pt);
+    padding: 8pt;
+    margin: 8pt;
+    resize: vertical;
+    box-sizing: border-box;
+}
+.post-form textarea:hover {
+    border: 1.2pt solid var(--highlight-color);
+}
+.post-form .action-button {
+    float: right;
+    margin-right: 8pt;
+    margin-bottom: 8pt;
+}
+.post {
+    padding: 16pt;
+    margin-bottom: 8pt;
+    position: relative;
+    display: block;
+}
+.post img {
+    position: absolute;
+    border-radius: 50%;
+    width: 36pt;
+    height: 36pt;
+    margin-right: 8pt;
+    border: 1pt solid var(--normal-text-color);
+}
+.post a {
+    color: var(--normal-text-color);
+    /* text-decoration: none; */
+}
+.post-body {
+    margin-left: 50pt;
+}
+.post-date {
+    color: var(--action-item-color);
+    font-size: 0.85rem;
+    margin: 3pt 0;
+    display: inline-block;
+}
+.post-content {
+    margin-bottom: 8pt;
+    line-height: 1.5;
+}
+.post-actions {
+    margin-top: 8pt;
+    display: flex;
+    align-items: center;
+}
+.post-actions a, .post-actions button, 
+.post-actions .action-count {
+    margin-right: 8pt;
+    color: var(--action-item-color);
+    cursor: pointer;    
+    background: none;
+    border: none;
+    display: inline;
+    padding: 0;
+    font-size: 12pt;
+    text-decoration: none;
+}
+.post-actions form {
+    display: inline;
+}
+.post-actions .action-count {
+    vertical-align: middle;
+    margin-left: -4pt;
+}
+.post-actions .action-count:hover {
+    color: var(--action-item-color);
+}
+.post-actions *:hover {
+    color: var(--highlight-color)
+}
+.post .comments {
+    margin-top: 16pt;
+    display: block;
+}
+.user-follow {
+    position: absolute;
+    margin: 18pt;
+    top: 0pt;
+    right: 0pt;
+    color: var(--action-item-color);
+}
+.user-follow *:hover {
+    color: var(--highlight-color);
+}
+.username {
+    font-weight: bold;
+    display: block;
+}
+.clear {
+    clear: both;
+}
+.error-message {
+    margin: 24pt 0;
+    color: #d61111;
+}
+.no-content-message {
+    margin: 24pt 0;
+}
+.footer {
+    text-align: left;
+    padding-top: 24pt;
+    padding-bottom: 16pt;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: var(--action-item-color);
+}
+.footer p {
+    font-size: 10pt;
+}
+.link {
+    margin-left: 16pt;
+}
+.page-title {
+    width: 100%;
+    background-color: #2e3a59;    /* dark blue-gray */
+    padding: 20px 0;
+    text-align: center;
+}
+
+.page-title h1 {
+    color: white;
+    margin: 0;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* START OF BOOK CSS */
+.book-container {
+    display: flex;
+    gap: 24px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin: auto;
+}
+
+.book-cover img {
+    max-width: 200px;
+    border-radius: 8px;
+}
+
+.book-details {
+    flex: 1;
+}
+
+.book-title {
+    margin: 0;
+    font-size: 2em;
+}
+
+.book-authors {
+    margin: 8px 0;
+    font-style: italic;
+}
+
+.book-category,
+.book-rating,
+.book-release {
+    margin: 6px 0;
+    font-size: 0.95em;
+}
+
+.book-description {
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.fa-book-open {
+    opacity: 0.6;
+}
+
+.book-actions {
+    display: flex;
+    gap: 10px;               
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 8px;         
+}
+
+.book-actions form {
+    margin: 0;
+    padding: 0;
+}
+
+.book-actions button {
+    border: none;
+    background: none;
+    font-size: 1.4rem;       
+    cursor: pointer;
+    padding: 4px;
+    transition: transform 0.1s ease;
+}
+
+.book-actions button:hover {
+    transform: scale(1.15);
+}
+
+.rating-value {
+    font-weight: 600;
+}
+
+.ratings-count {
+    color: #999;          
+    margin-left: 4px;     
+    font-size: 0.85em;    
+}
+
+.authorname::after {
+    content: ", ";
+}
+
+.authorname:last-child::after {
+    content: "";
+}
+
+.browselink {
+    color: inherit;       
+    text-decoration: none; 
+    cursor: pointer;       
+}
+
+.browselink:hover {
+    text-decoration: underline;  
+    opacity: 0.8;                
+}
+
+
+
+
+
+/* ===== Browse Layout ===== */
+.container.browse-layout {
+    max-width: 1200px;
+    margin: 24pt auto;
+
+}
+
+.browse-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-top: 1.5rem;
+}
+
+/* ===== Filter panel (left) ===== */
+.browse-filters {
+  flex: 0 0 260px;
+  background: #f7f7f9;
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e1e4eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Each filter row */
+.filter-box {
+  margin-bottom: 1rem;
+}
+
+.filter-box label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: #333;
+}
+
+/* Text inputs + select */
+.filter-input,
+.browse-filters input[type="text"],
+.browse-filters select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5de;
+  font-size: 0.9rem;
+  outline: none;
+  background-color: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.filter-input:focus,
+.browse-filters input[type="text"]:focus,
+.browse-filters select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Slider */
+.browse-filters input[type="range"] {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+/* Apply button */
+.filter-button {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-radius: 999px;
+  border: none;
+  background: #3b82f6;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.filter-button:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}
+
+.filter-button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* instead of a grid, make it a clean vertical list */
+.books-grid {
+    display: flex;
+    flex-direction: column;   /* one card per row */
+    gap: 24px;                /* space between cards */
+}
+
+.books-grid .book-container {
+    width: 100%;
+    margin: 0 auto 24px auto;
+    padding: 20px 30px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Pagination */
+.pagination {
+    margin-top: 25px;
+    text-align: center;
+}
+
+.pagination-number,
+.pagination-button {
+    display: inline-block;
+    margin: 2px;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #444;
+}
+
+.pagination-number.active {
+    background: #2b6cb0;
+    color: white;
+    font-weight: bold;
+    border-color: #2b6cb0;
+}
+ 
