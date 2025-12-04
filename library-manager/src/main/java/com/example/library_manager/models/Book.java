@@ -118,6 +118,21 @@ public class Book {
         this.showdesc = false;
     }
 
+    public Book(String isbn, String title, List<Author> authors, String imglink) {
+        this.isbn = isbn;
+        this.title = title;
+        this.imglink = imglink;
+        this.authors = authors;
+        this.category = "N/A";
+        this.publishDate = "N/A";
+        this.rating = 0.0f;
+        this.numRatings = 0;
+        this.heartsCount = 0;
+        this.isHearted = false;
+        this.isWishlisted = false;
+        this.isRead = false;
+        this.showdesc = false;
+    }
 
     /**
      * Sets the authors of the book.
@@ -154,7 +169,7 @@ public class Book {
     public String getCategory() {
         return category;
     }
-    
+
     public String getPublishDate() {
         String input = publishDate;
         DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

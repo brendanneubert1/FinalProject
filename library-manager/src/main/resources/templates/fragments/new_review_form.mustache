@@ -1,0 +1,114 @@
+<div class="review-layout">
+
+    <!-- ===================== LEFT SIDE: REVIEW FORM ===================== -->
+    <form class="new-review-form" method="post" action="/createreview">
+
+        <!-- Hidden selected book ID (controller sets selectedBookId) -->
+        <input type="hidden" name="bookId" value="{{selectedBookId}}">
+
+        <!-- Error message from controller -->
+        {{#error}}
+        <div class="error-box">
+            {{error}}
+        </div>
+        {{/error}}
+
+        <!-- Book title + search button -->
+        <div class="form-group">
+            <label for="bookTitle">Book Name</label>
+            <div class="book-search-row">
+                <input type="text"
+                       id="bookTitle"
+                       name="bookTitle"
+                       class="form-control"
+                       placeholder="Enter the book title"
+                       value="{{bookTitle}}">
+
+                <!-- This button runs the search -->
+                <button type="submit"
+                        class="btn btn-secondary book-search-btn"
+                        formaction="/createreview/search">
+                    🔍
+                </button>
+            </div>
+
+            <small class="book-search-hint">
+                Type a title and click the search icon, then pick the correct book.
+            </small>
+        </div>
+
+        <!-- Star rating -->
+        <div class="form-group">
+            <label>Rating</label>
+            <div class="star-rating">
+                <input type="radio" id="star5" name="rating" value="5">
+                <label for="star5">&#9733;</label>
+
+                <input type="radio" id="star4" name="rating" value="4">
+                <label for="star4">&#9733;</label>
+
+                <input type="radio" id="star3" name="rating" value="3">
+                <label for="star3">&#9733;</label>
+
+                <input type="radio" id="star2" name="rating" value="2">
+                <label for="star2">&#9733;</label>
+
+                <input type="radio" id="star1" name="rating" value="1">
+                <label for="star1">&#9733;</label>
+            </div>
+        </div>
+
+        <!-- Recommended -->
+        <div class="form-group">
+            <label>Recommended?</label>
+            <div class="recommend-toggle">
+                <input type="radio" id="recommend-yes" name="recommended" value="true">
+                <label for="recommend-yes" class="thumb thumb-up">
+                    <i class="fa fa-thumbs-up"></i>
+                </label>
+
+                <input type="radio" id="recommend-no" name="recommended" value="false">
+                <label for="recommend-no" class="thumb thumb-down">
+                    <i class="fa fa-thumbs-down"></i>
+                </label>
+            </div>
+        </div>
+
+        <!-- Review content -->
+        <div class="form-group">
+            <label for="reviewContent">Review Content</label>
+            <textarea id="reviewContent"
+                      name="reviewContent"
+                      class="form-control"
+                      rows="4"
+                      placeholder="Write your review here..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Submit Review
+        </button>
+
+    </form>
+
+
+
+    <!-- ===================== RIGHT SIDE: SEARCH RESULTS ===================== -->
+    <div class="book-results-panel">
+
+        {{#searchResults}}
+            <!-- Each result is a link pointing back to home_page with bookId + title -->
+            <a class="basic-book-card"
+               href="/?bookId={{isbn}}&bookTitle={{title}}">
+                {{> fragments/basic_book}}
+            </a>
+        {{/searchResults}}
+
+        {{^searchResults}}
+            <p class="book-results-placeholder">
+                Search for a title to see matching books here.
+            </p>
+        {{/searchResults}}
+
+    </div>
+
+</div>

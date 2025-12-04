@@ -27,10 +27,11 @@ PRIMARY KEY (authorId)
 );
 
 CREATE TABLE review (
-reviewId 	BIGINT AUTO_INCREMENT,
-userId	 	INT NOT NULL,
-bookId	 	VARCHAR(20) NOT NULL,
-body	 	TEXT,
+reviewId 		BIGINT AUTO_INCREMENT,
+userId	 		INT NOT NULL,
+bookId	 		VARCHAR(20) NOT NULL,
+reccommended 	BOOLEAN NOT NULL,
+body	 		TEXT,
 created_date 	DATETIME,
 PRIMARY KEY (reviewId),
 FOREIGN KEY (userId) REFERENCES `user`(userId)

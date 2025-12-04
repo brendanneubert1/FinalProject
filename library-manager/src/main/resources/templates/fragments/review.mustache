@@ -11,10 +11,10 @@
 
     <!-- ===== REVIEW HEADER ===== -->
     <header class="review-header">
-        <h1>Review by {{userName}}</h1>
+        <h1>Review by <a class="browselink" href="profile/{{userId}}">{{userName}}</h1>
         <div class="review-meta">
             <span class="review-rating">Rating: {{rating}} / 5</span>
-            <span class="review-date">· {{reviewDate}}</span>
+            <span class="review-date"> {{reviewDate}}</span>
         </div>
     </header>
 
@@ -22,7 +22,7 @@
 
     <!-- ===== BOOK FRAGMENT ===== -->
     <section class="review-book">
-        {{> fragments/simple_book }}
+        {{> fragments/basic_book}}
     </section>
 
     <hr>

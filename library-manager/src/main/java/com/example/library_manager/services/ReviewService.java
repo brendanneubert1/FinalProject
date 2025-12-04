@@ -42,6 +42,11 @@ public class ReviewService {
     }
 
 
-    
+    public boolean makeReview(String userId, String reviewContent, String bookTitle, int rating, boolean reccommended) {
+        // TODO Auto-generated method stub
+        // FIRST search for book by title to get bookId (IF TITLE DOESNT MATCH ISBN RETURN FALSE)
+        // THEN create review with review object attributes
+        return false;
+    }
 
 }

@@ -200,4 +200,43 @@ GROUP BY B.isbn, A.authorId;
     }
 
 
+    public List<Book> searchBooksByTitle(String title) throws SQLException{
+        // TODO Auto-generated method stub
+        final String sql = """
+        SELECT 
+        isbn, title, A.name, A.authorId, imglink, category 
+        FROM book 
+        LEFT JOIN written_by WB ON WB.bookId = book.isbn
+        LEFT JOIN author A ON A.authorId = WB.authorId
+        WHERE title LIKE CONCAT('%', ?, '%');
+        """;
+
+        Map<String, Book> bookMap = new LinkedHashMap<>(); // preserves order
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, title);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String isbn = rs.getString("isbn");
+                    Book book = bookMap.get(isbn);
+                    if (book == null) {
+                        book = new Book(
+                            rs.getString("isbn"),
+                            rs.getString("title"),
+                            new ArrayList<>(), // empty authors for now
+                            rs.getString("imglink")
+                        );
+                        bookMap.put(isbn, book);
+                    }
+                    book.getAuthors().add(new Author(
+                        rs.getInt("authorId"),
+                        rs.getString("name")
+                    ));
+                }
+            }
+        }
+
+        return new ArrayList<>(bookMap.values());
+    }
+
 }
