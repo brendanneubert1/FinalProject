@@ -94,17 +94,17 @@ nav a:hover {
 .center-align{
     text-align: center;
 }
-.post-form textarea {
+.review-form textarea {
     width: calc(100% - 16pt);
     padding: 8pt;
     margin: 8pt;
     resize: vertical;
     box-sizing: border-box;
 }
-.post-form textarea:hover {
+.review-form textarea:hover {
     border: 1.2pt solid var(--highlight-color);
 }
-.post-form .action-button {
+.review-form .action-button {
     float: right;
     margin-right: 8pt;
     margin-bottom: 8pt;
@@ -484,3 +484,265 @@ nav a:hover {
     border-color: #2b6cb0;
 }
  
+
+
+
+
+/* ===== Review Section (existing reviews below the form) ===== */
+.review-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 40px;
+    color: #777;
+    font-style: italic;
+}
+
+.review-card {
+    width: 60%;
+    max-width: 700px;
+    margin: 20px 0;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ===== Layout: review form centered, thin results card on the right ===== */
+.review-layout {
+    display: flex;
+    justify-content: center;      /* center the whole block */
+    gap: 24px;                    /* space between form and results */
+    align-items: flex-start;
+    max-width: 820px;             /* total width of form + results */
+    margin: 40px auto;            /* center on page */
+}
+
+/* Review form card */
+.new-review-form {
+    flex: 0 0 460px;              /* fixed-ish width for form */
+    margin: 0;
+    padding: 24px 28px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    border: 1px solid #e2e6ea;
+}
+
+/* Form groups */
+.new-review-form .form-group {
+    margin-bottom: 18px;
+}
+
+.new-review-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Inputs / textarea */
+.new-review-form .form-control {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.new-review-form .form-control:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.15);
+}
+
+/* Star rating */
+.star-rating {
+    display: inline-flex;
+    flex-direction: row-reverse; /* makes hover fill left */
+    font-size: 1.6rem;
+    gap: 4px;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    color: #d0d0d0;
+    transition: color 0.15s ease;
+}
+
+/* hover fill */
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #f2b01e;
+}
+
+/* when selected */
+.star-rating input:checked ~ label {
+    color: #f2b01e;
+}
+
+/* Recommended thumbs */
+.recommend-toggle {
+    display: inline-flex;
+    gap: 10px;
+    font-size: 1.4rem;
+}
+
+.recommend-toggle input {
+    display: none;
+}
+
+.recommend-toggle .thumb {
+    cursor: pointer;
+    color: #9a9a9a;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+}
+
+/* selected state */
+.recommend-toggle input:checked + .thumb {
+    color: #0d6efd;
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+
+/* Submit button */
+.new-review-form .btn.btn-primary {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: none;
+    background: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.new-review-form .btn.btn-primary:hover {
+    background: #0b5ed7;
+}
+
+.new-review-form .btn.btn-primary:active {
+    transform: translateY(1px);
+}
+
+/* Search row inside the form */
+.book-search-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.book-search-btn {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+}
+
+.btn.btn-secondary {
+    border-radius: 999px;
+    border: 1px solid #ced4da;
+    background: #f8f9fa;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn.btn-secondary:hover {
+    background: #e9ecef;
+    border-color: #b6bcc3;
+}
+
+.book-search-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: #777;
+}
+
+/* Thin card for matching books */
+.book-results-panel {
+    flex: 0 0 220px;              /* narrow side card */
+    max-height: 360px;
+    padding: 16px 18px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e6ea;
+    overflow-y: auto;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.book-results-placeholder {
+    font-size: 0.85rem;
+    color: #777;
+    font-style: italic;
+}
+
+.basic-book-card {
+    display: block;
+    padding: 10px 8px;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s ease;
+}
+
+.basic-book-card:last-child {
+    border-bottom: none;
+}
+
+.basic-book-card:hover {
+    background: #f7f9fc;
+}
+/* Container in the results panel */
+.basic-book-result {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+/* Title */
+.basic-book-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* Thumbnail image */
+.basic-book-thumb {
+    width: 90px;
+    height: auto;
+    border-radius: 4px;
+    margin: 6px 0;
+    align-self: center;
+}
+
+/* Author(s) */
+.basic-book-authors {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.basic-book-result:last-child {
+    border-bottom: none;
+}
+
+.basic-book-result:hover {
+    background: #f5f7fa;
+}

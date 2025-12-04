@@ -1,13 +1,11 @@
- <section class="profile-section">
-        <h2>Reviewed Books</h2>
-
+ <section class="review-section">
         {{#reviews}}
-            <div class="book-card">
-                {{> fragments/book}}
+            <div class="review-card">
+                {{> fragments/review}}
             </div>
         {{/reviews}}
 
         {{^reviews}}
-            <p>No reviewed books.</p>
+            <p class="no-content-message">No Book Reviews (follow accounts to see their book reviews)</p>
         {{/reviews}}
     </section>

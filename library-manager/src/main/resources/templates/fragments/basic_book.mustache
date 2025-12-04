@@ -1,12 +1,16 @@
+<div class="basic-book-result">
 
+    <!-- Title -->
+    <div class="basic-book-title">{{title}}</div>
 
-<div class="post framed">
-    <img src="https://i.pravatar.cc/50?img=5" alt="User avatar">
-    <div class="post-body">
-        <div class="username">Another User</div>
-        <div class="post-date">March 6, 2024, 10:45 AM</div>
-        <div class="post-content">
-            Loving the new look of our microblogging site! #design #UI
-        </div>
+    <!-- Small cover image -->
+    <img class="basic-book-thumb" src="{{imglink}}" alt="{{title}} cover">
+
+    <!-- Authors -->
+    <div class="basic-book-authors">
+        {{#authors}}
+            <span class="authorname">{{authorname}}</span>
+        {{/authors}}
     </div>
+
 </div>

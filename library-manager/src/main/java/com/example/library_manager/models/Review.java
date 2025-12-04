@@ -3,6 +3,7 @@ package com.example.library_manager.models;
 import com.example.library_manager.models.Book;
 import com.example.library_manager.models.ExpandedBook;
 import java.time.LocalDateTime;
+import com.example.library_manager.models.User;
 
 
 /**
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 
 public class Review {
     private String reviewId;
-    private String userId;
+    private User user;
     private Book book;
     private String content;
     private int rating;
@@ -29,9 +30,9 @@ public class Review {
      * @param content       the content of the review
      * @param rating        the rating given in the review
      */
-    public Review(String reviewId, String userId, Book book, String content, int rating) {
+    public Review(String reviewId, User user, Book book, String content, int rating) {
         this.reviewId = reviewId;
-        this.userId = userId;
+        this.user = user;
         this.book = book;
         this.content = content;
         this.rating = rating;
@@ -41,7 +42,7 @@ public class Review {
         return reviewId;
     }
     public String getUserId() {
-        return userId;
+        return user.getUserId();
     }
     public Book getBookId() {
         return book;
