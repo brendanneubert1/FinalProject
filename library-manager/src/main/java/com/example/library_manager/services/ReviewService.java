@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import com.example.library_manager.models.Review;
 
 @Service
 @SessionScope
@@ -46,7 +47,14 @@ public class ReviewService {
         // TODO Auto-generated method stub
         // FIRST search for book by title to get bookId (IF TITLE DOESNT MATCH ISBN RETURN FALSE)
         // THEN create review with review object attributes
+        // USE the shorter Book constructor for reviews
         return false;
+    }
+
+    public List<Review> getHomeReviews(String loggedinUser) throws SQLException {
+        // TODO Auto-generated method stub
+        // use shorter Book constructor for reviews
+        return new ArrayList<>();
     }
 
 }

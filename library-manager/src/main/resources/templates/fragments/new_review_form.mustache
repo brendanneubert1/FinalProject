@@ -3,7 +3,7 @@
     <!-- ===================== LEFT SIDE: REVIEW FORM ===================== -->
     <form class="new-review-form" method="post" action="/createreview">
 
-        <!-- Hidden selected book ID (controller sets selectedBookId) -->
+        <!-- Hidden selected book ID -->
         <input type="hidden" name="bookId" value="{{selectedBookId}}">
 
         <!-- Error message from controller -->
@@ -24,7 +24,7 @@
                        placeholder="Enter the book title"
                        value="{{bookTitle}}">
 
-                <!-- This button runs the search -->
+                <!--runs the search -->
                 <button type="submit"
                         class="btn btn-secondary book-search-btn"
                         formaction="/createreview/search">
@@ -92,11 +92,10 @@
 
 
 
-    <!-- ===================== RIGHT SIDE: SEARCH RESULTS ===================== -->
+    <!-- ===================== SEARCH RESULTS ===================== -->
     <div class="book-results-panel">
 
         {{#searchResults}}
-            <!-- Each result is a link pointing back to home_page with bookId + title -->
             <a class="basic-book-card"
                href="/?bookId={{isbn}}&bookTitle={{title}}">
                 {{> fragments/basic_book}}
