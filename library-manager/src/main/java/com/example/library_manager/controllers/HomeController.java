@@ -17,6 +17,7 @@ import com.example.library_manager.models.Book;
 import com.example.library_manager.services.UserService;
 import com.example.library_manager.services.BookService;
 import com.example.library_manager.services.ReviewService;
+import com.example.library_manager.models.Review;
 
 @Controller
 @RequestMapping
@@ -49,8 +50,10 @@ public class HomeController {
         ModelAndView mv = new ModelAndView("home_page");
 
         String loggedinUser = userService.getLoggedInUser().getUserId();
+        List<Review> reviews = reviewService.getHomeReviews(loggedinUser);
 
         mv.addObject("errorMessage", error);
+        mv.addObject("reviews", reviews);
 
         //new_review_form fragment
         mv.addObject("selectedBookId", bookId != null ? bookId : "");

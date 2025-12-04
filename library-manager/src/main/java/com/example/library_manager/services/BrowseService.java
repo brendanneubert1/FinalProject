@@ -104,7 +104,7 @@ public class BrowseService {
         WHERE (? IS NULL OR b.title LIKE CONCAT('%', ?, '%'))
         AND (? IS NULL OR b.category LIKE CONCAT('%', ?, '%'))
         AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%'))
-        AND b.rating > ?
+        AND b.rating >= ?
         GROUP BY b.isbn
         ORDER BY b.title
         LIMIT ? OFFSET ?;
