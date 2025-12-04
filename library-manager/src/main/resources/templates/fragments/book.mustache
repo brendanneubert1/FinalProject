@@ -35,9 +35,14 @@
             <button class="fa fa-book-open"></button>
         </form>
         {{/isRead}} 
-    </div>
 
+     <form method="post" action="/books/{{isbn}}/rate">
+            <label for="rating">Rate this book:</label>
+            <input type="number" name="rating" min="0" max="5" step="0.1" required>
+            <button type="submit">Submit Rating</button>
+    </form>
     </div>
+</div>
 
     <div class="book-details">
         <h1 class="book-title">{{title}}</h1>
@@ -63,6 +68,24 @@
             {{#numRatings}}
             <span class="ratings-count"> ({{numRatings}}) </span>
             {{/numRatings}}
+        </div>
+
+        <div class="book-avg-rating">
+            {{#avgRating}}
+                <strong>Average user rating:</strong> {{avgRating}} / 5.0
+            {{/avgRating}}
+            {{^avgRating}}
+                <strong>Average user rating:</strong> No ratings yet. 
+            {{/avgRating}}
+        </div>
+
+        <div class="book-user-rating">
+            {{#userRatingValue}}
+                <strong>Your rating:</strong> {{userRatingValue}} / 5.0
+            {{/userRatingValue}}
+            {{^userRatingValue}}
+                <strong>Your rating:</strong> You haven't rated this book yet. 
+            {{/userRating}}
         </div>
 
         <div class="book-release">
