@@ -41,7 +41,7 @@ public class HomeController {
     @GetMapping
     public ModelAndView webpage(@RequestParam(name = "error", required = false) String error) throws SQLException{
         // See notes on ModelAndView in BookmarksController.java.
-        ModelAndView mv = new ModelAndView("books_page");
+        ModelAndView mv = new ModelAndView("home_page");
 
         // Following line populates sample data.
         // You should replace it with actual data from the database.

@@ -5,6 +5,9 @@ import java.sql.Date;
 import java.util.List;
 import com.example.library_manager.models.Author;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 
 /**
  * Represents a user of the micro blogging platform.
@@ -151,9 +154,16 @@ public class Book {
     public String getCategory() {
         return category;
     }
+    
     public String getPublishDate() {
-        return publishDate;
+        String input = publishDate;
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy");
+        LocalDate date = LocalDate.parse(input, inputFormatter);
+        String output = date.format(outputFormatter);
+        return output;
     }
+
     public float getRating() {
         return rating;
     }
