@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +21,20 @@ import com.example.library_manager.models.Author;
 import com.example.library_manager.models.BrowseResult;
 import com.example.library_manager.models.ExpandedBook;
 import com.example.library_manager.models.PageLink;
+import com.example.library_manager.models.Rating;
+import com.example.library_manager.services.RatingService;
 
 @Service
 @SessionScope
 public class BrowseService {
     // dataSource enables talking to the database.
     private final DataSource dataSource;
+    private final RatingService ratingService;
 
     @Autowired
-    public BrowseService(DataSource dataSource) {
+    public BrowseService(DataSource dataSource, RatingService ratingService) {
         this.dataSource = dataSource;
+        this.ratingService = ratingService;
     }
 
 
@@ -69,45 +74,43 @@ public class BrowseService {
 
         System.out.println("Page=" + page + " Size=" + size + " Offset=" + offset);
 
-
         // PAGE QUERY BOOKS ONLY 
         final String booksSql = """
-         SELECT
-            b.isbn,
-            b.title,
-            b.imglink,
-            b.category,
-            b.description,
-            b.release_date AS publishDate,
-            b.rating,
-            b.num_ratings,
-            b.num_pages,
-            COUNT(DISTINCT L.userId) AS likes_count,
-            MAX(CASE WHEN ? = L.userId  THEN 1 ELSE 0 END) AS liked,
-            MAX(CASE WHEN ? = W.userId  THEN 1 ELSE 0 END) AS wishlisted,
-            MAX(CASE WHEN ? = R.userId  THEN 1 ELSE 0 END) AS `read`
-        FROM book b
-        LEFT JOIN written_by wb ON b.isbn = wb.bookId
-        LEFT JOIN author a ON wb.authorId = a.authorId
-        LEFT JOIN likes as L ON b.isbn = L.bookId
-        LEFT JOIN wishlist as W ON b.isbn = W.bookId
-        LEFT JOIN `read` as R ON b.isbn = R.bookId 
-        WHERE (? IS NULL OR b.title LIKE CONCAT('%', ?, '%'))
-        AND (? IS NULL OR b.category LIKE CONCAT('%', ?, '%'))
-        AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%'))
-        AND b.rating >= ?
-        GROUP BY b.isbn
-        ORDER BY b.title
-        LIMIT ? OFFSET ?;
+            SELECT
+                b.isbn,
+                b.title,
+                b.imglink,
+                b.category,
+                b.description,
+                b.release_date AS publishDate,
+                b.rating,
+                b.num_ratings,
+                b.num_pages,
+                COUNT(DISTINCT L.userId) AS likes_count,
+                MAX(CASE WHEN ? = L.userId  THEN 1 ELSE 0 END) AS liked,
+                MAX(CASE WHEN ? = W.userId  THEN 1 ELSE 0 END) AS wishlisted,
+                MAX(CASE WHEN ? = R.userId  THEN 1 ELSE 0 END) AS `read`
+            FROM book b
+            LEFT JOIN written_by wb ON b.isbn = wb.bookId
+            LEFT JOIN author a ON wb.authorId = a.authorId
+            LEFT JOIN likes as L ON b.isbn = L.bookId
+            LEFT JOIN wishlist as W ON b.isbn = W.bookId
+            LEFT JOIN `read` as R ON b.isbn = R.bookId 
+            WHERE (? IS NULL OR b.title LIKE CONCAT('%', ?, '%'))
+            AND (? IS NULL OR b.category LIKE CONCAT('%', ?, '%'))
+            AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%'))
+            AND b.rating >= ?
+            GROUP BY b.isbn
+            ORDER BY b.title
+            LIMIT ? OFFSET ?;
         """;
 
         Map<String, ExpandedBook> map = new LinkedHashMap<>();
-
         List<String> pageIsbns = new ArrayList<>();
 
         try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(booksSql)) {
-            
+
             stmt.setString(1, loggedInUser);
             stmt.setString(2, loggedInUser);
             stmt.setString(3, loggedInUser);      
@@ -123,7 +126,6 @@ public class BrowseService {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-
                     String isbn = rs.getString("isbn");
                     pageIsbns.add(isbn);
 
@@ -148,7 +150,8 @@ public class BrowseService {
                 }
             }
         }
-        // return empty if no books in page
+
+        // Return empty if no books on page
         if (pageIsbns.isEmpty()) {
             return new BrowseResult(
                     List.of(),
@@ -162,19 +165,19 @@ public class BrowseService {
                     List.of()
             );
         }
-        // Get authors for the books
-        String placeholders = String.join(",", java.util.Collections.nCopies(pageIsbns.size(), "?"));
 
+        // Get authors for the books
+        String placeholders = String.join(",", Collections.nCopies(pageIsbns.size(), "?"));
         String authorsSql = 
-        "SELECT wb.bookId, a.authorId, a.name AS author_name " + 
-        "FROM written_by wb " +
-        "JOIN author a ON wb.authorId = a.authorId " +
-        "WHERE wb.bookId IN (" + placeholders + ")" +
-        " AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%')); ";
+            "SELECT wb.bookId, a.authorId, a.name AS author_name " + 
+            "FROM written_by wb " +
+            "JOIN author a ON wb.authorId = a.authorId " +
+            "WHERE wb.bookId IN (" + placeholders + ")" +
+            " AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%')); ";
 
         try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(authorsSql)) {
-            
+
             int index = 1;
             for (String isbn : pageIsbns) {
                 stmt.setString(index++, isbn);
@@ -185,7 +188,6 @@ public class BrowseService {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String bookId = rs.getString("bookId");
-
                     ExpandedBook book = map.get(bookId);
                     if (book != null) {
                         book.getAuthors().add(new Author(
@@ -197,6 +199,30 @@ public class BrowseService {
             }
         }
 
+        // ===== Add ratings here =====
+        String userId = loggedInUser;
+        for (ExpandedBook book : map.values()) {
+            try {
+                // Fetch average rating
+                Double avg = ratingService.getAverageRatingForBook(book.getIsbn());
+                book.setAvgRating(avg);
+            } catch (Exception e) {
+                e.printStackTrace();
+                book.setAvgRating(null);
+            }
+
+            try {
+                // Fetch current user's rating
+                Double userRating = ratingService
+                    .getRatingForUserAndBook(userId, book.getIsbn())
+                    .map(Rating::getRating)
+                    .orElse(null);
+                book.setUserRatingValue(userRating);
+            } catch (Exception e) {
+                e.printStackTrace();
+                book.setUserRatingValue(null);
+            }
+        }
 
         // Pagination
         boolean hasPrev = page > 1;
@@ -206,9 +232,8 @@ public class BrowseService {
 
         // Page windows
         int maxshown = 9;
-        int startPage = Math.max(1, page-maxshown /2);
+        int startPage = Math.max(1, page - maxshown / 2);
         int endPage = startPage + maxshown;
-
         if (endPage > totalPages) {
             endPage = totalPages;
             startPage = Math.max(1, endPage - maxshown + 1);
@@ -216,11 +241,11 @@ public class BrowseService {
 
         List<PageLink> pages = new ArrayList<>();
         for (int p = startPage; p <= endPage; p++) {
-            
+            pages.add(new PageLink(p, p == page));
         }
 
         System.out.printf(
-    "Pagination: page=%d size=%d totalPages=%d hasPrev=%b hasNext=%b pagesSize=%d%n",
+            "Pagination: page=%d size=%d totalPages=%d hasPrev=%b hasNext=%b pagesSize=%d%n",
             page, size, totalPages, hasPrev, hasNext, pages.size()
         );
 
@@ -236,7 +261,6 @@ public class BrowseService {
                 pages
         );
     }
-
 
 
     }

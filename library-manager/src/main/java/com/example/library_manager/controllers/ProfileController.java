@@ -1,5 +1,6 @@
 package com.example.library_manager.controllers;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.example.library_manager.models.Book;
 import com.example.library_manager.models.ExpandedBook;
-import com.example.library_manager.services.UserService;
 import com.example.library_manager.services.BookService;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.sql.SQLException;
+import com.example.library_manager.services.UserService;
 
 
 

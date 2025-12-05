@@ -1,23 +1,17 @@
 
- 
-
-
-//package com.example.library_manager.models;
+ package com.example.library_manager.models;
 
 
 /**
  * Represents a review made by a user for a book.
  */
 
-/** 
+ 
 
-public class Rating {
-    private Long ratingId; 
-    private Integer userId;
+    public class Rating {
+    private String userId;
     private String bookId;
     private Double rating;
-*/
-
 
     /**
      * Shows users rating for a book.
@@ -28,27 +22,20 @@ public class Rating {
      */
 
 
-    /** 
-    public Rating(Long ratingId, Integer userId, String bookId, Double rating) {
-        this.ratingId = ratingId; 
+    
+    public Rating(String userId, String bookId, Double rating) {
+        
         this.userId = userId;
         this.bookId = bookId;
         this.rating = rating;
     }
 
-    public Long getRatingId() {
-        return ratingId; 
-    }
-
-    public void setRatingId(Long ratingId) {
-        this.ratingId = ratingId; 
-    }
-
-    public Integer getUserId() {
+   
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -70,4 +57,3 @@ public class Rating {
 
 }
 
-*/

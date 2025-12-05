@@ -18,6 +18,7 @@ import org.springframework.web.context.annotation.SessionScope;
 import com.example.library_manager.models.Author;
 import com.example.library_manager.models.Book;
 import com.example.library_manager.models.ExpandedBook;
+import com.example.library_manager.models.Rating;
 
 
 
@@ -26,10 +27,15 @@ import com.example.library_manager.models.ExpandedBook;
 public class BookService {
     // dataSource enables talking to the database.
     private final DataSource dataSource;
+    private final RatingService ratingService;
+
+
+
 
     @Autowired
-    public BookService(DataSource dataSource) {
+    public BookService(DataSource dataSource, RatingService ratingService) {
         this.dataSource = dataSource;
+        this.ratingService = ratingService;
     }
 
     
@@ -110,8 +116,26 @@ GROUP BY B.isbn, A.authorId;
                 }
             }
         }
+         // Add ratings for each book
+    for (ExpandedBook book : bookMap.values()) {
+        try {
+            book.setAvgRating(ratingService.getAverageRatingForBook(book.getIsbn()));
+        } catch (Exception e) {
+            book.setAvgRating(null);
+        }
 
-        return new ArrayList<>(bookMap.values());
+        try {
+            Double userRating = ratingService.getRatingForUserAndBook(userId, book.getIsbn())
+                                             .map(Rating::getRating)
+                                             .orElse(null);
+            book.setUserRatingValue(userRating);
+        } catch (Exception e) {
+            book.setUserRatingValue(null);
+        }
+    }
+
+    return new ArrayList<>(bookMap.values());
+
     }
 
 
@@ -180,8 +204,25 @@ GROUP BY B.isbn, A.authorId;
                 }
             }
         }
+        for (ExpandedBook book : bookMap.values()) {
+        try {
+            book.setAvgRating(ratingService.getAverageRatingForBook(book.getIsbn()));
+        } catch (Exception e) {
+            book.setAvgRating(null);
+        }
 
-        return new ArrayList<>(bookMap.values());
+        try {
+            Double userRating = ratingService.getRatingForUserAndBook(userId, book.getIsbn())
+                                             .map(Rating::getRating)
+                                             .orElse(null);
+            book.setUserRatingValue(userRating);
+        } catch (Exception e) {
+            book.setUserRatingValue(null);
+        }
+    }
+
+    return new ArrayList<>(bookMap.values());
+    
     }
 
 
@@ -230,11 +271,12 @@ GROUP BY B.isbn, A.authorId;
                 }
             }
         }
-
-        return new ArrayList<>(bookMap.values());
+            
+                return new ArrayList<>(bookMap.values());
     }
 
     public ExpandedBook getBooksByIsbn(String bookId, String userId) throws SQLException {
+    ExpandedBook book = null;
     final String sql = """
         SELECT
             B.isbn,
@@ -266,7 +308,6 @@ GROUP BY B.isbn, A.authorId;
     try (Connection conn = dataSource.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        
         stmt.setString(1, userId); // liked
         stmt.setString(2, userId); // wishlisted
         stmt.setString(3, userId); // read
@@ -275,12 +316,12 @@ GROUP BY B.isbn, A.authorId;
         try (ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 String isbn = rs.getString("isbn");
-                ExpandedBook book = bookMap.get(isbn);
+                book = bookMap.get(isbn);
                 if (book == null) {
                     book = new ExpandedBook(
                         rs.getString("isbn"),
                         rs.getString("title"),
-                        new ArrayList<>(), // authors will be added below
+                        new ArrayList<>(),
                         rs.getString("imglink"),
                         rs.getString("category"),
                         rs.getString("release_date"),
@@ -296,7 +337,6 @@ GROUP BY B.isbn, A.authorId;
                     bookMap.put(isbn, book);
                 }
 
-                
                 book.getAuthors().add(new Author(
                     rs.getInt("authorId"),
                     rs.getString("author_name")
@@ -305,7 +345,27 @@ GROUP BY B.isbn, A.authorId;
         }
     }
 
-    // Return the  book if exists, otherwise null
+    if (book != null) {
+        // Fetch ratings for this book
+        try {
+            Double avgRating = ratingService.getAverageRatingForBook(bookId);
+            book.setAvgRating(avgRating);
+        } catch (Exception e) {
+            book.setAvgRating(null);
+            e.printStackTrace();
+        }
+
+        try {
+            Double userRating = ratingService.getRatingForUserAndBook(userId, bookId)
+                                             .map(Rating::getRating)
+                                             .orElse(null);
+            book.setUserRatingValue(userRating);
+        } catch (Exception e) {
+            book.setUserRatingValue(null);
+            e.printStackTrace();
+        }
+    }
+
     return bookMap.isEmpty() ? null : bookMap.values().iterator().next();
 }
 

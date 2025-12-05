@@ -8,19 +8,21 @@ package com.example.library_manager.controllers;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
+ 
 import com.example.library_manager.models.ExpandedBook;
+import com.example.library_manager.models.Rating;
+import com.example.library_manager.models.User;
 import com.example.library_manager.services.BookService;
+import com.example.library_manager.services.RatingService;
 import com.example.library_manager.services.UserService;
 
 
@@ -32,13 +34,15 @@ import com.example.library_manager.services.UserService;
 public class BookController {
     private final BookService bookService;
     private final UserService userService;
+    private final RatingService ratingService;
 
 
 
     @Autowired
-    public BookController(BookService bookService, UserService userService) {
+    public BookController(BookService bookService, UserService userService, RatingService ratingService) {
         this.bookService = bookService;
         this.userService = userService;
+        this.ratingService = ratingService; 
         
     }
 
@@ -63,18 +67,39 @@ public class BookController {
         String userId = userService.getLoggedInUser().getUserId();
 
         // Fetch the book with likes, wishlist, read info
-        ExpandedBook book = bookService.getBooksByIsbn(bookId, userId);
+       ExpandedBook book = bookService.getBooksByIsbn(bookId, userId);
 
-         mv.addObject("books", book == null ? new ArrayList<>() : List.of(book));
-        mv.addObject("errorMessage", error);
+       
+           
+            Double avgRating = null; 
+            try {
+                avgRating = ratingService.getAverageRatingForBook(bookId); 
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            mv.addObject("avgRating", avgRating); 
 
-    
-        // Enable the following line if you want to show no content message.
-        // Do that if your content list is empty.
-        // mv.addObject("isNoContent", true);
+            User loggedIn = userService.getLoggedInUser(); 
+            Double userRatingValue = null; 
 
-        return mv;
+            if (loggedIn != null) {
+                try {
+                
+                    var ratingOpt = ratingService.getRatingForUserAndBook(userId, bookId); 
+                    userRatingValue = ratingOpt.map(Rating::getRating).orElse(null); 
+                } catch (Exception e) {
+                    e.printStackTrace(); 
+                }
+               
+                
+        }
+         mv.addObject("userRatingValue", userRatingValue); 
+            return mv;
+
     }
+
+        
+        
 
     /**
      * Handles comments added on posts.
@@ -163,4 +188,22 @@ public class BookController {
         return "redirect:/book/" + bookId + "?error=" + message;
     }
 
+   @PostMapping("/{bookId}/rate")
+    public String rateBook(
+            @PathVariable("bookId") String bookId,
+            @RequestParam("rating") Double ratingValue
+    ) {
+        String userId = userService.getLoggedInUser().getUserId();
+
+        try {
+            ratingService.upsertRating(userId, bookId, ratingValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "redirect:/book/" + bookId;
+    }
 }
+
+
+            

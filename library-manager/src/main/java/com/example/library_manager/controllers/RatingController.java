@@ -1,12 +1,15 @@
-/**
+
 
 package com.example.library_manager.controllers;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.example.library_manager.models.User;
-import com.example.library_manager.services.RatingService; 
+import com.example.library_manager.services.RatingService;
 import com.example.library_manager.services.UserService; 
-import org.springframework.stereotype.Controller; 
-import org.springframework.web.bind.annotation.*; 
 
 @Controller
 public class RatingController {
@@ -28,7 +31,7 @@ public class RatingController {
             return "redirect:/login"; 
         }
 
-        int userId = user.getUserId(); 
+        String userId = user.getUserId(); 
         try {
             ratingService.upsertRating(userId, isbn, ratingValue); 
 
@@ -39,4 +42,3 @@ public class RatingController {
     }
 }
 
- */

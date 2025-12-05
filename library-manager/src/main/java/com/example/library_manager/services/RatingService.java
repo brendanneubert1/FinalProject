@@ -1,4 +1,4 @@
-/** 
+
 package com.example.library_manager.services;
 
 
@@ -24,7 +24,7 @@ public class RatingService {
         this.dataSource = dataSource;
     }
 
-    public void upsertRating(int userId, String bookId, Double ratingValue) throws SQLException{
+    public void upsertRating(String userId, String bookId, Double ratingValue) throws SQLException{
         if (ratingValue < 0.0 || ratingValue > 5.0) {
             throw new IllegalArgumentException("Rating must be between 0.0 and 5.0");
         }
@@ -37,7 +37,7 @@ public class RatingService {
 
         try (Connection conn = dataSource.getConnection(); 
                 PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setInt(1, userId); 
+                    ps.setString(1, userId); 
                     ps.setString(2, bookId); 
                     ps.setDouble(3, ratingValue); 
 
@@ -45,14 +45,14 @@ public class RatingService {
                 }
             }
 
-        public Optional<Rating> getRatingForUserAndBook(int userId, String bookId) throws SQLException {
+        public Optional<Rating> getRatingForUserAndBook(String userId, String bookId) throws SQLException {
             String sql = """
                     SELECT * FROM rating
                     WHERE userId = ? AND bookId = ?
                     """;
             try (Connection conn = dataSource.getConnection(); 
                 PreparedStatement ps = conn.prepareStatement(sql)) {
-                    ps.setInt(1, userId); 
+                    ps.setString(1, userId); 
                     ps.setString(2, bookId); 
 
                     try (ResultSet rs = ps.executeQuery()) {
@@ -91,14 +91,12 @@ public class RatingService {
         }
 
         private Rating mapRowToRating(ResultSet rs) throws SQLException {
-            Long ratingId = rs.getLong("ratingId"); 
-            int userId = rs.getInt("userId"); 
+            String userId = rs.getString("userId"); 
             String bookId = rs.getString("bookId"); 
             double ratingValue = rs.getDouble("rating"); 
 
-            return new Rating(ratingId, userId, bookId, ratingValue); 
+            return new Rating(userId, bookId, ratingValue); 
         }
        
     }
 
-    */
