@@ -22,21 +22,12 @@ public class Rating {
      * @param bookId          the unique identifier of the book being rated
      * @param rating       the rating given to the book
      */
-    public Rating(Long ratingId, Integer userId, String bookId, Double rating) {
-        this.ratingId = ratingId; 
+    public Rating(Integer userId, String bookId, Double rating) {
         this.userId = userId;
         this.bookId = bookId;
         this.rating = rating;
     }
-
-    public Long getRatingId() {
-        return ratingId; 
-    }
-
-    public void setRatingId(Long ratingId) {
-        this.ratingId = ratingId; 
-    }
-
+    
     public Integer getUserId() {
         return userId;
     }
