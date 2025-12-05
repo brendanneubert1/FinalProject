@@ -83,13 +83,12 @@ public class RatingService {
                 }
         }
 
-        private Rating mapRowToRating(ResultSet rs) throws SQLException {
-            Long ratingId = rs.getLong("ratingId"); 
+        private Rating mapRowToRating(ResultSet rs) throws SQLException { 
             int userId = rs.getInt("userId"); 
             String bookId = rs.getString("bookId"); 
             double ratingValue = rs.getDouble("rating"); 
 
-            return new Rating(ratingId, userId, bookId, ratingValue); 
+            return new Rating(userId, bookId, ratingValue); 
         }
        
     }
