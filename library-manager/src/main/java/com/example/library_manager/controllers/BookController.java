@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.example.library_manager.models.User; 
 import com.example.library_manager.services.UserService;
+import com.example.library_manager.models.Rating; 
+import com.example.library_manager.services.RatingService; 
 import com.example.library_manager.services.BookService;
 import com.example.library_manager.models.Book;
 import com.example.library_manager.models.ExpandedBook;
@@ -33,12 +36,14 @@ import com.example.library_manager.models.ExpandedBook;
 public class BookController {
     private final BookService bookService;
     private final UserService userService;
+    private final RatingService ratingService;
 
 
     @Autowired
-    public BookController(BookService bookService, UserService userService) {
+    public BookController(BookService bookService, UserService userService, RatingService ratingService) {
         this.bookService = bookService;
         this.userService = userService;
+        this.ratingService = ratingService; 
     }
 
     /**
@@ -75,6 +80,29 @@ public class BookController {
         // Do that if your content list is empty.
         // mv.addObject("isNoContent", true);
 
+
+        Double avgRating = null; 
+        try {
+            avgRating = ratingService.getAverageRatingForBook(bookId); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mv.addObject("avgRating", avgRating); 
+
+        User loggedIn = userService.getLoggedInUser(); 
+        Double userRatingValue = null; 
+
+        if (loggedIn != null) {
+            try {
+                Integer userId = loggedIn.getUserId(); 
+                var ratingOpt = ratingService.getRatingForUserAndBook(userId, bookId); 
+                userRatingValue = ratingOpt.map(Rating::getRating).orElse(null); 
+            } catch (Exception e) {
+                e.printStackTrace(); 
+            }
+            
+        }
+        mv.addObject("userRatingValue", userRatingValue); 
         return mv;
     }
 
@@ -164,5 +192,6 @@ public class BookController {
                 StandardCharsets.UTF_8);
         return "redirect:/book/" + bookId + "?error=" + message;
     }
+
 
 }
