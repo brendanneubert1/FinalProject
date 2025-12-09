@@ -1,0 +1,125 @@
+package com.example.library_manager.controllers;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.example.library_manager.models.Book;
+import com.example.library_manager.models.Review;
+import com.example.library_manager.models.User;
+import com.example.library_manager.services.BookService;
+import com.example.library_manager.services.ReviewService;
+import com.example.library_manager.services.UserService;
+
+@Controller
+@RequestMapping
+public class HomeController {
+
+    private final UserService userService;
+    private final BookService bookService;
+    private final ReviewService reviewService;
+
+    @Autowired
+    public HomeController(UserService userService,
+                          BookService bookService,
+                          ReviewService reviewService) {
+        this.userService = userService;
+        this.bookService = bookService;
+        this.reviewService = reviewService;
+    }
+
+    /**
+     * Root URL – home_page.
+     * Also passes state for the new_review_form fragment.
+     */
+    @GetMapping
+    public ModelAndView webpage(
+            @RequestParam(name = "error", required = false) String error,
+            @RequestParam(name = "bookId", required = false) String bookId,
+            @RequestParam(name = "bookTitle", required = false) String bookTitle
+    ) throws SQLException {
+
+        ModelAndView mv = new ModelAndView("home_page");
+
+        String loggedinUser = userService.getLoggedInUser().getUserId();
+        List<Review> reviews = reviewService.getHomeReviews(loggedinUser);
+
+        mv.addObject("errorMessage", error);
+        mv.addObject("reviews", reviews);
+
+        //new_review_form fragment
+        mv.addObject("selectedBookId", bookId != null ? bookId : "");
+        mv.addObject("bookTitle", bookTitle != null ? bookTitle : "");
+        mv.addObject("error", error);        // used by {{#error}} in the fragment
+        mv.addObject("searchResults", null); // no results on plain GET
+
+        return mv;
+    }
+
+    /**
+     * Handles the search button in the new_review_form fragment.
+     * Renders home_page again, but with searchResults populated.
+     */
+    @PostMapping("/createreview/search")
+    public ModelAndView searchBooksForReview(
+            @RequestParam("bookTitle") String bookTitle
+    ) throws SQLException {
+
+        ModelAndView mv = new ModelAndView("home_page");
+
+        String loggedinUser = userService.getLoggedInUser().getUserId();
+        // use loggedinUser in home_page if needed
+
+        List<Book> results = bookService.searchBooksByTitle(bookTitle);
+
+        mv.addObject("errorMessage", null);
+        mv.addObject("error", null);
+
+        // === For the new_review_form fragment ===
+        mv.addObject("bookTitle", bookTitle);
+        mv.addObject("selectedBookId", "");
+        mv.addObject("searchResults", results);
+
+        return mv;
+    }
+
+   
+    @PostMapping("/createreview")
+public String submitReview(
+        @RequestParam(value = "bookTitle", required = false) String bookTitle,
+        @RequestParam("reviewContent") String reviewContent,
+        @RequestParam("recommended") boolean recommended
+) throws SQLException {
+
+    if (bookTitle == null || bookTitle.isEmpty()) {
+        String encodedError = URLEncoder.encode("Please select a book first", StandardCharsets.UTF_8);
+        return "redirect:/?error=" + encodedError;
+    }
+
+    User loggedIn = userService.getLoggedInUser();
+    if (loggedIn == null) {
+        String encodedError = URLEncoder.encode("You must be logged in to submit a review", StandardCharsets.UTF_8);
+        return "redirect:/?error=" + encodedError;
+    }
+    String userId = loggedIn.getUserId();
+
+    boolean success = reviewService.makeReview(userId, reviewContent, bookTitle, recommended);
+
+    if (!success) {
+        String message = URLEncoder.encode("Failed to submit review. Please try again.", StandardCharsets.UTF_8);
+        return "redirect:/?error=" + message;
+    }
+
+    return "redirect:/";
+}
+
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+
+<body>
+
+{{> fragments/title}}
+{{> fragments/top_bar}}
+
+<div class="container review-page">
+
+    <!-- ===== REVIEW HEADER ===== -->
+    <header class="review-header">
+    <h1>Review by <a class="browselink" href="profile/{{userId}}">{{userName}}</a></h1>
+    <div class="review-meta">
+        {{#recommended}}
+            <span class="review-recommend">Recommended ✅</span>
+        {{/recommended}}
+        {{^recommended}}
+            <span class="review-recommend">Not Recommended ❌</span>
+        {{/recommended}}
+        <span class="review-date">{{reviewDate}}</span>
+    </div>
+</header>
+
+<section class="review-book">
+    {{> fragments/basic_book}}
+</section>
+
+<section class="review-content">
+    <h2>Review</h2>
+    <p class="review-text">{{reviewText}}</p>
+</section>

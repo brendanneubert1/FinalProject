@@ -1,0 +1,101 @@
+<!-- ===================== LEFT SIDE: REVIEW FORM ===================== -->
+<form class="new-review-form" method="post" action="/createreview">
+
+    <!-- Hidden selected book ID -->
+    <input type="hidden" name="bookId" id="bookId" value="{{selectedBookId}}">
+
+    <!-- Error message from controller -->
+    {{#error}}
+    <div class="error-box">
+        {{error}}
+    </div>
+    {{/error}}
+
+    <!-- Book title + search button -->
+    <div class="form-group">
+        <label for="bookTitle">Book Name</label>
+        <div class="book-search-row">
+            <input type="text"
+                   id="bookTitle"
+                   name="bookTitle"
+                   class="form-control"
+                   placeholder="Enter the book title"
+                   value="{{bookTitle}}">
+
+            <!-- Runs the search -->
+            <button type="submit"
+                    class="btn btn-secondary book-search-btn"
+                    formaction="/createreview/search">
+                🔍
+            </button>
+        </div>
+
+        <small class="book-search-hint">
+            Type a title and click the search icon, then pick the correct book.
+        </small>
+    </div>
+
+    <!-- Recommended -->
+    <div class="form-group">
+        <label>Recommended?</label>
+        <div class="recommend-toggle">
+            <input type="radio" id="recommend-yes" name="recommended" value="true">
+            <label for="recommend-yes" class="thumb thumb-up"><i class="fa fa-thumbs-up"></i></label>
+
+            <input type="radio" id="recommend-no" name="recommended" value="false">
+            <label for="recommend-no" class="thumb thumb-down"><i class="fa fa-thumbs-down"></i></label>
+        </div>
+    </div>
+
+    <!-- Review content -->
+    <div class="form-group">
+        <label for="reviewContent">Review Content</label>
+        <textarea id="reviewContent"
+                  name="reviewContent"
+                  class="form-control"
+                  rows="4"
+                  placeholder="Write your review here..."></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Review</button>
+</form>
+
+<!-- ===================== SEARCH RESULTS ===================== -->
+<div class="book-results-panel">
+    {{#searchResults}}
+    <div class="basic-book-card" 
+         data-isbn="{{isbn}}" 
+         data-title="{{title}}" 
+         onclick="selectBook(this)">
+        {{> fragments/basic_book}}
+    </div>
+    {{/searchResults}}
+
+    {{^searchResults}}
+    <p class="book-results-placeholder">
+        Search for a title to see matching books here.
+    </p>
+    {{/searchResults}}
+</div>
+
+<script>
+function selectBook(el) {
+    const isbn = el.getAttribute('data-isbn');
+    const title = el.getAttribute('data-title');
+
+    // Update hidden input and text field
+    document.getElementById('bookId').value = isbn;
+    document.getElementById('bookTitle').value = title;
+
+    // Highlight selected book
+    document.querySelectorAll('.basic-book-card').forEach(card => card.classList.remove('selected'));
+    el.classList.add('selected');
+}
+</script>
+
+<style>
+.basic-book-card.selected {
+    border: 2px solid #007bff;
+    background-color: #f0f8ff;
+}
+</style>
