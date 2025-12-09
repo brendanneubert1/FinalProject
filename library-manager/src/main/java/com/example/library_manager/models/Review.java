@@ -1,9 +1,6 @@
 package com.example.library_manager.models;
 
-import com.example.library_manager.models.Book;
-import com.example.library_manager.models.ExpandedBook;
 import java.time.LocalDateTime;
-import com.example.library_manager.models.User;
 
 
 /**
@@ -14,46 +11,69 @@ import com.example.library_manager.models.User;
 
 public class Review {
     private String reviewId;
-    private User user;
+    private String userId;
     private Book book;
     private String content;
-    private int rating;
+    private boolean recommended;
     private LocalDateTime reviewDate;
 
-
-
-    /**
-     * Constructs an ExpandedBook with specified details.
-     * @param reviewId      the unique identifier of the review
-     * @param userId        the unique identifier of the user who made the review
-     * @param book          the unique identifier of the book being reviewed
-     * @param content       the content of the review
-     * @param rating        the rating given in the review
-     */
-    public Review(String reviewId, User user, Book book, String content, int rating) {
+    // Constructor
+    public Review(String reviewId, String userId, Book book, String content, boolean recommended, LocalDateTime reviewDate) {
         this.reviewId = reviewId;
-        this.user = user;
+        this.userId = userId;
         this.book = book;
         this.content = content;
-        this.rating = rating;
+        this.recommended = recommended;
+        this.reviewDate = reviewDate;
     }
 
+    // Getters
     public String getReviewId() {
         return reviewId;
     }
+
     public String getUserId() {
-        return user.getUserId();
+        return userId;
     }
-    public Book getBookId() {
+
+    public Book getBook() {
         return book;
     }
+
     public String getContent() {
         return content;
     }
-    public int getRating() {
-        return rating;
+
+    public boolean isRecommended() {
+        return recommended;
     }
+
     public LocalDateTime getReviewDate() {
         return reviewDate;
+    }
+
+   
+    public void setReviewId(String reviewId) {
+        this.reviewId = reviewId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setRecommended(boolean recommended) {
+        this.recommended = recommended;
+    }
+
+    public void setReviewDate(LocalDateTime reviewDate) {
+        this.reviewDate = reviewDate;
     }
 }

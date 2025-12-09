@@ -1,8 +1,8 @@
 <div class="book-container">
-    <a href="/book/{{isbn}}">
-     <div class="book-cover">
+
+    <!-- ===== COVER + ACTIONS COLUMN ===== -->
+    <div class="book-cover">
         <img src="{{imglink}}" alt="{{title}} cover">
-    </a>
 
         <div class="book-actions">
 
@@ -48,22 +48,60 @@
                 {{/isRead}}
 
             </div>
+
+            <!-- ===== STAR RATING SECTION (SECOND ROW) ===== -->
+<div class="rating-section">
+    <form method="post" action="/book/{{isbn}}/rate" class="star-rating-form">
+
+        <div class="star-rating">
+            <input type="radio" id="star5" name="rating" value="5">
+            <label for="star5"><i class="fa-solid fa-star"></i></label>
+
+            <input type="radio" id="star4" name="rating" value="4">
+            <label for="star4"><i class="fa-solid fa-star"></i></label>
+
+            <input type="radio" id="star3" name="rating" value="3">
+            <label for="star3"><i class="fa-solid fa-star"></i></label>
+
+            <input type="radio" id="star2" name="rating" value="2">
+            <label for="star2"><i class="fa-solid fa-star"></i></label>
+
+            <input type="radio" id="star1" name="rating" value="1">
+            <label for="star1"><i class="fa-solid fa-star"></i></label>
         </div>
+
+        <!-- ⭐ BUTTON ON ITS OWN NEW LINE ⭐ -->
+        <div class="rating-submit-wrapper">
+            <button type="submit" class="rating-submit">Submit Rating</button>
+        </div>
+
+    </form>
+</div>
+
+        </div>
+
     </div>
 
+    <!-- ===== BOOK DETAILS COLUMN ===== -->
     <div class="book-details">
-        <a class = "browselink" href="/book/{{isbn}}"><h1 class="book-title">{{title}}</h1> </a>
+
+        <h1 class="book-title">{{title}}</h1>
 
         <div class="book-authors">
             {{#authors}}
-                <a class="authorname browselink" href="/browse?page=1&title=&author={{authorname}}&category=&minRating=0&size=10">
-                {{authorname}}</a>
+                <a class="authorname browselink"
+                   href="/browse?page=1&title=&author={{authorname}}&category=&minRating=0&size=10">
+                    {{authorname}}
+                </a>
             {{/authors}}
         </div>
 
         <div class="book-category">
             <strong>Category:</strong>
-            <a class= "browselink" href="/browse?page=1&title=&author=&category={{category}}&minRating=0&size=10">{{category}} </a>
+            <a class="browselink"
+               href="/browse?page=1&title=&author=&category={{category}}&minRating=0&size=10">
+                {{category}}
+            </a>
         </div>
 
         <div class="book-pages">
@@ -71,11 +109,30 @@
         </div>
 
         <div class="book-rating">
-            <strong>Rating:</strong> <span class="rating-value">{{rating}}</span> 
+            <strong>Rating:</strong> <span class="rating-value">{{rating}}</span>
             {{#numRatings}}
             <span class="ratings-count"> ({{numRatings}}) </span>
             {{/numRatings}}
         </div>
+
+        <div class="book-rating">
+            {{#avgRating}}
+            <strong>Average User Rating:</strong> {{avgRating}} / 5.0
+            {{/avgRating}}
+            {{^avgRating}}
+            <strong>Average User Rating:</strong> No ratings yet.
+            {{/avgRating}}
+        </div>
+
+        <div class="book-rating">
+            {{#userRatingValue}}
+            <strong>Your Rating:</strong> {{userRatingValue}} / 5.0
+            {{/userRatingValue}}
+            {{^userRatingValue}}
+            <strong>Your Rating:</strong> You haven't rated this book yet.
+            {{/userRatingValue}}
+        </div>
+
         <div class="book-release">
             <strong>Publish Date:</strong> {{publishDate}}
         </div>
@@ -85,4 +142,5 @@
         </div>
 
     </div>
+
 </div>
