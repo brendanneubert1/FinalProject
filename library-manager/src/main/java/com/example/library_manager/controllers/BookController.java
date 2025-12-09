@@ -94,7 +94,7 @@ public class BookController {
 
         if (loggedIn != null) {
             try {
-                Integer userId = loggedIn.getUserId(); 
+                String userId = loggedIn.getUserId(); 
                 var ratingOpt = ratingService.getRatingForUserAndBook(userId, bookId); 
                 userRatingValue = ratingOpt.map(Rating::getRating).orElse(null); 
             } catch (Exception e) {

@@ -9,7 +9,7 @@ package com.example.library_manager.models;
 
 public class Rating {
     private Long ratingId; 
-    private Integer userId;
+    private String userId;
     private String bookId;
     private Double rating;
 
@@ -22,17 +22,17 @@ public class Rating {
      * @param bookId          the unique identifier of the book being rated
      * @param rating       the rating given to the book
      */
-    public Rating(Integer userId, String bookId, Double rating) {
+    public Rating(String userId, String bookId, Double rating) {
         this.userId = userId;
         this.bookId = bookId;
         this.rating = rating;
     }
     
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

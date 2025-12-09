@@ -26,7 +26,7 @@ public class RatingController {
             return "redirect:/login"; 
         }
 
-        int userId = user.getUserId(); 
+        String userId = user.getUserId(); 
         try {
             ratingService.upsertRating(userId, isbn, ratingValue); 
 
