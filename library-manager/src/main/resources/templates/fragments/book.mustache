@@ -1,6 +1,8 @@
 <div class="book-container">
+    <a href="/book/{{isbn}}">
     <div class="book-cover">
         <img src="{{imglink}}" alt="{{title}} cover">
+    </a>
     <div class="book-actions">
         {{#isHearted}}
         <form method="get" action="/book/{{isbn}}/like/false">
@@ -40,7 +42,7 @@
     </div>
 
     <div class="book-details">
-        <h1 class="book-title">{{title}}</h1>
+        <a class = "browselink" href="/book/{{isbn}}"><h1 class="book-title">{{title}}</h1> </a>
 
         <div class="book-authors">
             {{#authors}}
