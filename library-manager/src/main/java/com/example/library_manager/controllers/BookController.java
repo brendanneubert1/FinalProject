@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,7 +45,7 @@ public class BookController {
      * This handlers serves the web page for a specific post.
      * Note there is a path variable {postId}.
      * An example URL handled by this function looks like below:
-     * http://localhost:8081/post/1
+     * http://localhost:8081/book/1
      * The above URL assigns 1 to postId.
      * 
      * See notes from HomeController.java regardig error URL parameter.
@@ -77,13 +76,6 @@ public class BookController {
 
         return mv;
     }
-
-    /**
-     * Handles comments added on posts.
-     * See comments on webpage function to see how path variables work here.
-     * This function handles form posts.
-     * See comments in HomeController.java regarding form submissions.
-     */
     
     /**
      * Handles likes added on posts.

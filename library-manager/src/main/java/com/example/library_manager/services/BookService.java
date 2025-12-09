@@ -3,9 +3,7 @@ package com.example.library_manager.services;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.library_manager.models.Book;
-import com.example.library_manager.models.BrowseResult;
 import com.example.library_manager.models.ExpandedBook;
-import com.example.library_manager.models.PageLink;
 
 import java.util.List;
 import java.util.Map;
@@ -18,17 +16,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 
 
 
