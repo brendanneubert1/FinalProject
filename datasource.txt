@@ -1,0 +1,9 @@
+We used the 7k Books with Metadata dataset on Kaggle as the foundation for populating our database. 
+This dataset provides ISBNs, titles, authors, categories, ratings, and other metadata.
+
+We developed DataLoader.java to handle importing the CSV file into our database.
+Our DataLoader connects to the database** using JDBC, reads the CSV file containing book metadata,
+parses fields for relevant data like  ISBN, title, authors, etc., 
+inserts or updates books, handles authors by checking if an author already exists,
+and many other vital functions to ensure the data is properly formatted and the tables are filled correctly.
+
