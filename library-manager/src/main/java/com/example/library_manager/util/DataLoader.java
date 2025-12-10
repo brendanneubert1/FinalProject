@@ -4,13 +4,16 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataLoader {
 
+    // === CONFIG ===
     // If Java is running on your host and Docker exposes 3306 → use localhost.
     // If Java is in another container on same network, use "mysql-server-4370" instead of "localhost".
     private static final String DB_URL =
@@ -18,6 +21,12 @@ public class DataLoader {
 
     private static final String DB_USER = "root";      // <-- change if needed
     private static final String DB_PASS = "mysqlpass"; // <-- change
+
+    // Max length allowed by your `book.title` column (e.g. VARCHAR(255))
+    private static final int MAX_TITLE_LENGTH = 255;
+
+    // Output file for truncated titles
+    private static final String TRUNCATED_TITLES_REPORT = "truncated_titles_report.csv";
 
     // Insert or update into book (your schema)
     private static final String INSERT_BOOK = """
@@ -44,8 +53,7 @@ public class DataLoader {
             release_date = VALUES(release_date)
         """;
 
-    // Insert author by name. We DON'T rely on UNIQUE(name) in schema,
-    // so we do a SELECT first to reuse existing authors.
+    // Insert author by name.
     private static final String INSERT_AUTHOR = """
         INSERT INTO author (name)
         VALUES (?)
@@ -61,16 +69,31 @@ public class DataLoader {
         VALUES (?, ?)
         """;
 
+    // Simple holder for truncated title info
+    private static class TruncatedTitle {
+        final String isbn;
+        final int originalLength;
+        final String originalTitle;
+        final String truncatedTitle;
+
+        TruncatedTitle(String isbn, int originalLength, String originalTitle, String truncatedTitle) {
+            this.isbn = isbn;
+            this.originalLength = originalLength;
+            this.originalTitle = originalTitle;
+            this.truncatedTitle = truncatedTitle;
+        }
+    }
+
     public static void main(String[] args) {
         // TODO: update this path to where your CSV actually lives
-        String csvPath = "library-manager\\books.csv";
+        String csvPath = "library-manager/books.csv";
 
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS)) {
             conn.setAutoCommit(false);
 
             try {
                 importCsv(conn, csvPath);
-                System.out.println("csv imported successfully.");
+                System.out.println("CSV imported successfully.");
                 conn.commit();
                 System.out.println("Import completed successfully.");
             } catch (Exception e) {
@@ -90,6 +113,8 @@ public class DataLoader {
     private static void importCsv(Connection conn, String path)
             throws IOException, CsvException, SQLException {
 
+        List<TruncatedTitle> truncatedTitles = new ArrayList<>();
+
         try (CSVReader reader = new CSVReader(new FileReader(path));
              PreparedStatement bookStmt = conn.prepareStatement(INSERT_BOOK);
              PreparedStatement insertAuthorStmt = conn.prepareStatement(INSERT_AUTHOR, Statement.RETURN_GENERATED_KEYS);
@@ -105,7 +130,6 @@ public class DataLoader {
             String[] header = rows.get(0);
             int idxIsbn13       = findIndex(header, "isbn13");
             int idxTitle        = findIndex(header, "title");
-            
             int idxAuthors      = findIndex(header, "authors");
             int idxCategories   = findIndex(header, "categories");
             int idxThumbnail    = findIndex(header, "thumbnail");
@@ -122,20 +146,30 @@ public class DataLoader {
                     continue;
                 }
 
-                String isbn        = safeCell(row, idxIsbn13);
-                String title       = safeCell(row, idxTitle);
-                String authorsStr  = safeCell(row, idxAuthors);
-                String categories  = safeCell(row, idxCategories);
-                String thumbnail   = safeCell(row, idxThumbnail);
-                String description = safeCell(row, idxDescription);
-                String yearStr     = safeCell(row, idxYear);
-                String ratingStr   = safeCell(row, idxAvgRating);
-                String numPagesStr = safeCell(row, idxNumPages);
+                String isbn          = safeCell(row, idxIsbn13);
+                String rawTitle      = safeCell(row, idxTitle);
+                String authorsStr    = safeCell(row, idxAuthors);
+                String categories    = safeCell(row, idxCategories);
+                String thumbnail     = safeCell(row, idxThumbnail);
+                String description   = safeCell(row, idxDescription);
+                String yearStr       = safeCell(row, idxYear);
+                String ratingStr     = safeCell(row, idxAvgRating);
+                String numPagesStr   = safeCell(row, idxNumPages);
                 String numRatingsStr = safeCell(row, idxRatingsCount);
 
                 if (isbn.isEmpty()) {
                     System.out.printf("Row %d has empty isbn13, skipping.%n", i + 1);
                     continue;
+                }
+
+                // === Handle title truncation ===
+                String title = rawTitle;
+                if (rawTitle != null && rawTitle.length() > MAX_TITLE_LENGTH) {
+                    String truncated = rawTitle.substring(0, MAX_TITLE_LENGTH);
+                    truncatedTitles.add(
+                            new TruncatedTitle(isbn, rawTitle.length(), rawTitle, truncated)
+                    );
+                    title = truncated;
                 }
 
                 Integer publishedYear = parseInteger(yearStr);
@@ -145,7 +179,7 @@ public class DataLoader {
 
                 // Map published_year → release_date as YYYY-01-01
                 Date releaseDate = null;
-                if (publishedYear != null) {
+                if (publishedYear != null && publishedYear > 0) {
                     releaseDate = Date.valueOf(publishedYear + "-01-01");
                 }
 
@@ -190,9 +224,16 @@ public class DataLoader {
                     writtenByStmt.setInt(2, authorId);    // authorId
                     writtenByStmt.executeUpdate();
                 }
+
+                if (i % 1000 == 0) {
+                    System.out.println("Processed " + i + " data rows so far...");
+                }
             }
 
             System.out.println("Processed " + (rows.size() - 1) + " data rows.");
+
+            // After import, write truncated titles report (if any)
+            writeTruncatedTitlesReport(truncatedTitles);
         }
     }
 
@@ -277,6 +318,39 @@ public class DataLoader {
             } else {
                 throw new SQLException("Failed to get generated authorId for name: " + name);
             }
+        }
+    }
+
+    /**
+     * Writes a CSV file listing all titles that were truncated.
+     */
+    private static void writeTruncatedTitlesReport(List<TruncatedTitle> truncatedTitles) {
+        if (truncatedTitles.isEmpty()) {
+            System.out.println("No titles were truncated.");
+            return;
+        }
+
+        System.out.println("Writing truncated titles report to: " + TRUNCATED_TITLES_REPORT);
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(TRUNCATED_TITLES_REPORT))) {
+            // header
+            pw.println("isbn,original_length,original_title,truncated_title");
+
+            for (TruncatedTitle t : truncatedTitles) {
+                // Very basic CSV escaping: replace quotes with doubled quotes, wrap in quotes
+                String origEsc = "\"" + t.originalTitle.replace("\"", "\"\"") + "\"";
+                String truncEsc = "\"" + t.truncatedTitle.replace("\"", "\"\"") + "\"";
+
+                pw.printf("%s,%d,%s,%s%n",
+                        t.isbn,
+                        t.originalLength,
+                        origEsc,
+                        truncEsc
+                );
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to write truncated titles report:");
+            e.printStackTrace();
         }
     }
 }
