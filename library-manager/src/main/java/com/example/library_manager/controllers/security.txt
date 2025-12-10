@@ -1,0 +1,5 @@
+Our approach for storing user's passwords securly is through a hashing algorithm BCrypt. This is an 
+algorithm that does a one way hashing for the password the user entered to avoid storing password as plaintext
+to avoid hacking. Even if identical plaintext passowrds are provided, they will be stored as different hashes.
+When the password is entered on login screen, we supply this password and the hash is retrieved
+from the database.Then, BCrypt compares  the password to the hash without revealing the plaintext. 
