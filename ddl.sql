@@ -100,3 +100,6 @@ FOREIGN KEY (userId) REFERENCES `user`(userId)
  ON DELETE CASCADE ON UPDATE CASCADE,
 FOREIGN KEY (bookId) REFERENCES book(isbn)
  ON DELETE CASCADE ON UPDATE CASCADE);
+
+CREATE INDEX idx_book_title ON book (title);
+CREATE INDEX idx_book_category ON book (category);
