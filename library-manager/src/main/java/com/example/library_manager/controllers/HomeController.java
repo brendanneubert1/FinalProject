@@ -98,7 +98,6 @@ public class HomeController {
     @PostMapping("/createreview")
     public String submitReview(
             @RequestParam(value = "bookId", required = false) String bookId,
-            @RequestParam("rating") int rating,
             @RequestParam("recommended") boolean recommended,
             @RequestParam("reviewContent") String reviewContent,
             @RequestParam("bookTitle") String bookTitle
@@ -118,12 +117,11 @@ public class HomeController {
         }
 
         System.out.println("User is submitting a review for bookId: " + bookId);
-        System.out.println("Rating: " + rating);
         System.out.println("Recommended: " + recommended);
         System.out.println("Review Content: " + reviewContent);
         String userId = userService.getLoggedInUser().getUserId();
 
-        boolean success = reviewService.makeReview(userId, bookId, reviewContent, rating, recommended);
+        boolean success = reviewService.makeReview(userId, bookId, reviewContent, recommended);
         
         if (!success) {
             String message = URLEncoder.encode("Failed to submit review. Please try again.",
