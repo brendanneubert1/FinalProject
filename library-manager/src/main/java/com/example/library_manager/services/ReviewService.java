@@ -92,11 +92,52 @@ public List<Review> getHomeReviews(String loggedInUser) throws SQLException {
 
         }
     }
-    
-
     return reviews;
 }
 
 
+public List<Review> getReviewsByUserId(String userId) throws SQLException {
+    List<Review> reviews = new ArrayList<>();
 
+    String sql =
+    "SELECT " +
+    "   r.reviewId, r.userId, u.firstName, u.lastName, r.body, r.recommended, r.created_date, " +
+    "   b.isbn, b.title, b.imglink, b.category, b.rating, b.num_ratings, b.release_date AS publishDate " +
+    "FROM `review` r " +
+    "JOIN book b ON r.bookId = b.isbn " +
+    "JOIN `user` u ON u.userId = r.userId " +
+    "WHERE r.userId = ? " +
+    "ORDER BY r.created_date DESC";
+
+    try (Connection conn = dataSource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setInt(1, Integer.parseInt(userId));
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+
+                BookService bookService = new BookService(dataSource, new RatingService(dataSource));
+                Book b = bookService.getBooksByIsbn(rs.getString("isbn"), userId);
+                User u = new User(
+                    String.valueOf(rs.getInt("userId")),
+                    rs.getString("firstName"),
+                    rs.getString("lastName"));
+
+                Review review = new Review(
+                    String.valueOf(rs.getLong("reviewId")),
+                    u,
+                    b,
+                    rs.getString("body"),
+                            rs.getBoolean("recommended"),
+                            rs.getTimestamp("created_date").toLocalDateTime()
+                        );
+                        reviews.add(review);
+
+            }
+        }
+    }
+    return reviews;
+    }
+
+    
 }

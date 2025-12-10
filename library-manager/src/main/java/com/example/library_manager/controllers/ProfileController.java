@@ -14,6 +14,8 @@ import com.example.library_manager.models.ExpandedBook;
 import com.example.library_manager.services.UserService;
 import com.example.library_manager.services.BookService;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.example.library_manager.models.Review;
+import com.example.library_manager.services.ReviewService;
 
 import java.sql.SQLException;
 
@@ -25,11 +27,13 @@ import java.sql.SQLException;
 public class ProfileController {
     private final UserService userService;
     private final BookService bookService;
+    private final ReviewService reviewService;
     
     @Autowired
-    public ProfileController(UserService userService, BookService bookService) {
+    public ProfileController(UserService userService, BookService bookService, ReviewService reviewService) {
         this.userService = userService;
         this.bookService = bookService;
+        this.reviewService = reviewService;
     }
 
     @GetMapping
@@ -49,9 +53,11 @@ public class ProfileController {
         // You should replace it with actual data from the database.
         List<ExpandedBook> wishlistedBooks = bookService.getWishlistedBooks(userId);
         List<ExpandedBook> readBooks = bookService.getReadBooks(userId);
+        List<Review> reviews = reviewService.getReviewsByUserId(userId);
         //List<Post> posts = Utility.createSamplePostsListWithoutComments();
         mv.addObject("wishlistedbooks", wishlistedBooks);
         mv.addObject("readbooks", readBooks);
+        mv.addObject("reviews", reviews);
 
 
         // If an error occured, you can set the following property with the
