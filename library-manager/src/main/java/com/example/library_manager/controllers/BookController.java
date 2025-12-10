@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
- 
+
 import com.example.library_manager.models.ExpandedBook;
 import com.example.library_manager.models.Rating;
 import com.example.library_manager.models.User;
@@ -27,8 +27,6 @@ import com.example.library_manager.services.UserService;
 import java.util.List;
 import java.util.ArrayList;
 import jakarta.servlet.http.HttpServletRequest;
-
-
 
 /**
  * Handles /post URL and its sub urls.
@@ -40,14 +38,12 @@ public class BookController {
     private final UserService userService;
     private final RatingService ratingService;
 
-
-
     @Autowired
     public BookController(BookService bookService, UserService userService, RatingService ratingService) {
         this.bookService = bookService;
         this.userService = userService;
-        this.ratingService = ratingService; 
-        
+        this.ratingService = ratingService;
+
     }
 
     /**
@@ -75,35 +71,30 @@ public class BookController {
         books.add(book);
         mv.addObject("books", books);
 
-       
-           
-        Double avgRating = null; 
+        Double avgRating = null;
         try {
-            avgRating = ratingService.getAverageRatingForBook(bookId); 
+            avgRating = ratingService.getAverageRatingForBook(bookId);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        mv.addObject("avgRating", avgRating); 
+        mv.addObject("avgRating", avgRating);
 
-        User loggedIn = userService.getLoggedInUser(); 
-        Double userRatingValue = null; 
+        User loggedIn = userService.getLoggedInUser();
+        Double userRatingValue = null;
 
         if (loggedIn != null) {
             try {
-            
-                var ratingOpt = ratingService.getRatingForUserAndBook(userId, bookId); 
-                userRatingValue = ratingOpt.map(Rating::getRating).orElse(null); 
+
+                var ratingOpt = ratingService.getRatingForUserAndBook(userId, bookId);
+                userRatingValue = ratingOpt.map(Rating::getRating).orElse(null);
             } catch (Exception e) {
-                e.printStackTrace(); 
-            }          
-    }
-        mv.addObject("userRatingValue", userRatingValue); 
+                e.printStackTrace();
+            }
+        }
+        mv.addObject("userRatingValue", userRatingValue);
         return mv;
 
     }
-
-        
-        
 
     /**
      * Handles comments added on posts.
@@ -111,16 +102,17 @@ public class BookController {
      * This function handles form posts.
      * See comments in HomeController.java regarding form submissions.
      */
-    
+
     /**
      * Handles likes added on posts.
      * See comments on webpage function to see how path variables work here.
-     * See comments in PeopleController.java in followUnfollowUser function regarding 
+     * See comments in PeopleController.java in followUnfollowUser function
+     * regarding
      * get type form submissions and how path variables work.
      */
     @GetMapping("/{bookId}/like/{isAdd}")
     public String addOrRemoveHeart(@PathVariable("bookId") String bookId,
-                                @PathVariable("isAdd") Boolean isAdd, HttpServletRequest request) throws SQLException {
+            @PathVariable("isAdd") Boolean isAdd, HttpServletRequest request) throws SQLException {
         System.out.println("The user is attempting to add or remove a heart for a book:");
         System.out.println("\tbookId: " + bookId);
         System.out.println("\tisAdd: " + isAdd);
@@ -135,73 +127,78 @@ public class BookController {
             return "redirect:" + referer;
         } else {
             String message = URLEncoder.encode("Failed to (un)like the book. Please try again.",
-                                            StandardCharsets.UTF_8);
+                    StandardCharsets.UTF_8);
             return "redirect:/book/" + bookId + "?error=" + message;
         }
     }
 
-
-
     /**
-     * Handles bookmarking posts.
-     * See comments on webpage function to see how path variables work here.
-     * See comments in PeopleController.java in followUnfollowUser function regarding 
-     * get type form submissions.
+     * Handles wishlist actions.
+     * 
      */
     @GetMapping("/{bookId}/wishlist/{isAdd}")
     public String addOrRemoveWishlist(@PathVariable("bookId") String bookId,
-            @PathVariable("isAdd") Boolean isAdd, HttpServletRequest request ) throws SQLException{
-        System.out.println("The user is attempting add or remove a bookmark:");
+            @PathVariable("isAdd") Boolean isAdd, HttpServletRequest request) {
+        System.out.println("The user is attempting add or remove a book to their wishlist:");
         System.out.println("\tbookId: " + bookId);
         System.out.println("\tisAdd: " + isAdd);
 
-        // Redirect the user if the comment adding is a success.
-        // return "redirect:/post/" + postId;
-        String referer = request.getHeader("Referer");
-         boolean success = bookService.wishlistBook(userService.getLoggedInUser().getUserId(), bookId);
-        if (success) {
-            return "redirect:" + referer;
+        String message = URLEncoder.encode(
+                isAdd ? "Failed to bookmark the book. Please try again."
+                        : "Failed to unbookmark the book. Please try again.",
+                StandardCharsets.UTF_8);
+        try {
+            String referer = request.getHeader("Referer");
+            boolean success = bookService.wishlistBook(userService.getLoggedInUser().getUserId(), bookId, isAdd);
+            if (success) {
+                // Redirect the user if the book adding to the wishlist is a success.
+                return "redirect:" + referer;
+            } else {
+                // Redirect the user with an error message if there was an error.
+                return "redirect:/book/" + bookId + "?error=" + message;
+            }
+        } catch (Exception e) {
+            System.err.println(message + " : " + e.getMessage());
+            return "redirect:/book/" + bookId + "?error=" + message;
         }
 
-        // Redirect the user with an error message if there was an error.
-        String message = URLEncoder.encode("Failed to (un)bookmark the book. Please try again.",
-                StandardCharsets.UTF_8);
-        return "redirect:/book/" + bookId + "?error=" + message;
     }
 
     /**
      * Handles marking books as read.
-     * See comments on webpage function to see how path variables work here.
-     * See comments in PeopleController.java in followUnfollowUser function regarding 
-     * get type form submissions.
      */
     @GetMapping("/{bookId}/read/{isAdd}")
     public String markOrUnmarkRead(@PathVariable("bookId") String bookId,
-            @PathVariable("isAdd") Boolean isAdd, HttpServletRequest request) throws SQLException{
+            @PathVariable("isAdd") Boolean isAdd, HttpServletRequest request) {
         System.out.println("The user is attempting mark or unmark a book as read:");
         System.out.println("\tbookId: " + bookId);
         System.out.println("\tisAdd: " + isAdd);
 
-        // Redirect the user if the comment adding is a success.
-        // return "redirect:/post/" + postId;
-        boolean success = bookService.markBookAsRead(userService.getLoggedInUser().getUserId(), bookId);
-        String referer = request.getHeader("Referer");
-        if (success) {
-            return "redirect:" + referer;
-        }
-
         // Redirect the user with an error message if there was an error.
-        String message = URLEncoder.encode("Failed to (un)mark the book as read. Please try again.",
+        String message = URLEncoder.encode(
+                isAdd ? "Failed to mark the book as read. Please try again."
+                        : "Failed to unmark the book as read. Please try again.",
                 StandardCharsets.UTF_8);
-        return "redirect:/book/" + bookId + "?error=" + message;
+        try {
+            String referer = request.getHeader("Referer");
+            boolean success = bookService.markBookAsRead(userService.getLoggedInUser().getUserId(), bookId, isAdd);
+            if (success) {
+                return "redirect:" + referer;
+            } else {
+                return "redirect:/book/" + bookId + "?error=" + message;
+            }
+        } catch (Exception e) {
+            System.err.println(message + " : " + e.getMessage());
+
+            return "redirect:/book/" + bookId + "?error=" + message;
+        }
     }
 
-   @PostMapping("/{bookId}/rate")
+    @PostMapping("/{bookId}/rate")
     public String rateBook(
             @PathVariable("bookId") String bookId,
             @RequestParam("rating") Double ratingValue,
-            HttpServletRequest request
-    ) {
+            HttpServletRequest request) {
         String userId = userService.getLoggedInUser().getUserId();
 
         try {
@@ -215,6 +212,3 @@ public class BookController {
         return "redirect:" + referer;
     }
 }
-
-
-            

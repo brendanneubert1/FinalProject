@@ -39,14 +39,36 @@ public class BookService {
     }
 
     
-    public boolean wishlistBook(String userId, String bookId) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean wishlistBook(String userId, String bookId, boolean isAdd) throws SQLException {
+        String sql;
+        if (isAdd) {
+            sql = "INSERT INTO wishlist (userId, bookId) VALUES (?, ?)";
+        } else {
+            sql = "DELETE FROM wishlist WHERE userId = ? AND bookId = ?";
+        }
+
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            pstmt.setString(2, bookId);
+            return pstmt.executeUpdate() > 0; // returns true if at least one row was affected
+        }
     }
 
-    public boolean markBookAsRead(String userId, String bookId) {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean markBookAsRead(String userId, String bookId, boolean isAdd) throws SQLException {
+        String sql;
+        if (isAdd) {
+            sql = "INSERT INTO `read` (userId, bookId) VALUES (?, ?)";
+        } else {
+            sql = "DELETE FROM `read` WHERE userId = ? AND bookId = ?";
+        }
+
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            pstmt.setString(2, bookId);
+            return pstmt.executeUpdate() > 0; // returns true if at least one row was affected
+        }
     }
 
 
@@ -68,15 +90,15 @@ SELECT
 	A.authorId,
     A.name AS author_name,
 	COUNT(DISTINCT L.userId) AS likes_count,
-    MAX(CASE WHEN 1 = L.userId  THEN 1 ELSE 0 END) AS liked,
-    MAX(CASE WHEN 1 = W.userId  THEN 1 ELSE 0 END) AS wishlisted,
-    MAX(CASE WHEN 1 = R.userId  THEN 1 ELSE 0 END) AS `read`
+    MAX(CASE WHEN R.userId = L.userId  THEN 1 ELSE 0 END) AS liked,
+    MAX(CASE WHEN R.userId = W.userId  THEN 1 ELSE 0 END) AS wishlisted,
+    1 AS `read`
 FROM book B
 LEFT JOIN written_by WB ON WB.bookId = B.isbn
 LEFT JOIN author A ON A.authorId = WB.authorId
 LEFT JOIN likes as L ON b.isbn = L.bookId
 LEFT JOIN wishlist as W ON B.isbn = W.bookId
-LEFT JOIN `read` as R ON B.isbn = R.bookId
+INNER JOIN `read` as R ON B.isbn = R.bookId
 WHERE R.userId = ?
 GROUP BY B.isbn, A.authorId;       
         """;
@@ -156,14 +178,14 @@ SELECT
 	A.authorId,
     A.name AS author_name,
 	COUNT(DISTINCT L.userId) AS likes_count,
-    MAX(CASE WHEN 1 = L.userId  THEN 1 ELSE 0 END) AS liked,
-    MAX(CASE WHEN 1 = W.userId  THEN 1 ELSE 0 END) AS wishlisted,
-    MAX(CASE WHEN 1 = R.userId  THEN 1 ELSE 0 END) AS `read`
+    MAX(CASE WHEN W.userId = L.userId  THEN 1 ELSE 0 END) AS liked,
+    1 AS wishlisted,
+    MAX(CASE WHEN W.userId = R.userId  THEN 1 ELSE 0 END) AS `read`
 FROM book B
 LEFT JOIN written_by WB ON WB.bookId = B.isbn
 LEFT JOIN author A ON A.authorId = WB.authorId
 LEFT JOIN likes as L ON b.isbn = L.bookId
-LEFT JOIN wishlist as W ON B.isbn = W.bookId
+INNER JOIN wishlist as W ON B.isbn = W.bookId
 LEFT JOIN `read` as R ON B.isbn = R.bookId
 WHERE W.userId = ?
 GROUP BY B.isbn, A.authorId;       
