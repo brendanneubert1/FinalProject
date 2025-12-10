@@ -146,7 +146,7 @@
 
 /** URL: "/home"
 // Purpose: Retrieve the latest 20 reviews with book details for the home feed.
-*//
+*/
     String sql = """
         SELECT r.reviewId, r.userId, r.body, r.recommended, r.created_date,
             b.isbn, b.title, b.imglink, b.category, b.rating, b.num_ratings, b.releaseDate AS publishDate
@@ -164,3 +164,68 @@ final String registerSql = "INSERT INTO user (username, password, firstName, las
 // Purpose: Authenticate a user by checking if the username exists 
 */
 final String sql = "SELECT * FROM user WHERE username = ?";
+
+
+/** URL: /browse?page=?&title=?&category=?&author=?&minRating=?&pageSize=?
+// Purpose: Browse books with optional filters for title, category, author, and minimum rating, with pagination.
+*/
+final String booksSql = """
+    SELECT
+        b.isbn,
+        b.title,
+        b.imglink,
+        b.category,
+        b.description,
+        b.release_date AS publishDate,
+        b.rating,
+        b.num_ratings,
+        b.num_pages,
+        COUNT(DISTINCT L.userId) AS likes_count,
+        MAX(CASE WHEN ? = L.userId  THEN 1 ELSE 0 END) AS liked,
+        MAX(CASE WHEN ? = W.userId  THEN 1 ELSE 0 END) AS wishlisted,
+        MAX(CASE WHEN ? = R.userId  THEN 1 ELSE 0 END) AS `read`
+    FROM book b
+    LEFT JOIN written_by wb ON b.isbn = wb.bookId
+    LEFT JOIN author a ON wb.authorId = a.authorId
+    LEFT JOIN likes as L ON b.isbn = L.bookId
+    LEFT JOIN wishlist as W ON b.isbn = W.bookId
+    LEFT JOIN `read` as R ON b.isbn = R.bookId 
+    WHERE (? IS NULL OR b.title LIKE CONCAT('%', ?, '%'))
+    AND (? IS NULL OR b.category LIKE CONCAT('%', ?, '%'))
+    AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%'))
+    AND b.rating >= ?
+    GROUP BY b.isbn
+    ORDER BY b.title
+    LIMIT ? OFFSET ?;
+    """;
+
+/* URL: /browse?page=?&title=?&category=?&author=?&minRating=?&pageSize=?
+// Purpose: Get authors for a list of book IDs with optional author name filtering.
+*/
+String authorsSql = 
+"SELECT wb.bookId, a.authorId, a.name AS author_name " + 
+"FROM written_by wb " +
+"JOIN author a ON wb.authorId = a.authorId " +
+"WHERE wb.bookId IN (" + placeholders + ")" +
+" AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%')); ";
+
+/* URL: /people
+// Purpose: Get all users except the current user.
+*/
+final String sqlString = "select * from `user` where user.userId != "
+
+/** URL: /people
+// Purpose: get the latest review date from the review table for followable users for the people page
+*/
+final String sqlString = "SELECT max(created_date) AS latest_post FROM review WHERE userId = ?"
+
+/** URL: /people/{followUserId}/{isFollow}
+// Purpose: Check if the current user is following another user.
+*/
+final String sqlString = "select * from follows where userId = ? and follows = ?";
+
+/* URL: /people/{followUserId}/{isFollow}
+// Purpose: Follow or unfollow a user.
+*/
+String sqlString = "insert into follows (userId, follows) values (?, ?)";
+String sqlString = "delete from follows where userId = ? and follows = ?";
