@@ -64,14 +64,19 @@ public List<Review> getHomeReviews(String loggedInUser) throws SQLException {
     "FROM `review` r " +
     "JOIN book b ON r.bookId = b.isbn " +
     "JOIN `user` u ON u.userId = r.userId " +
+    "WHERE r.userId != ? AND r.userId IN ( " +
+    "SELECT F.follows FROM follows F WHERE F.userId = ?) " +
     "ORDER BY r.created_date DESC " +
     "LIMIT 20";
 
     try (Connection conn = dataSource.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery()) {
+        PreparedStatement ps = conn.prepareStatement(sql)) {
 
-        while (rs.next()) {
+        ps.setInt(1, Integer.parseInt(loggedInUser));
+        ps.setInt(2, Integer.parseInt(loggedInUser));
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
 
             BookService bookService = new BookService(dataSource, new RatingService(dataSource));
             Book b = bookService.getBooksByIsbn(rs.getString("isbn"), loggedInUser);
@@ -90,6 +95,7 @@ public List<Review> getHomeReviews(String loggedInUser) throws SQLException {
                     );
                     reviews.add(review);
 
+            }
         }
     }
     return reviews;
