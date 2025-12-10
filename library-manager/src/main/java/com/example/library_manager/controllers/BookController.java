@@ -197,7 +197,7 @@ public class BookController {
     @PostMapping("/{bookId}/rate")
     public String rateBook(
             @PathVariable("bookId") String bookId,
-            @RequestParam("rating") Double ratingValue,
+            @RequestParam(value = "rating", required = false) Double ratingValue,
             HttpServletRequest request) {
         String userId = userService.getLoggedInUser().getUserId();
 

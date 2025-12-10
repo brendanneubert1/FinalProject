@@ -49,8 +49,9 @@ public class ExpandedBook extends Book {
         return numPages;
     }
 
-    public Double getAvgRating() {
-        return avgRating;
+    public String getAvgRating() {
+        String avg = String.format("%.1f", avgRating);
+        return avg;
     }
 
     public Double getUserRatingValue() {
