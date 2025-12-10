@@ -1,5 +1,7 @@
 CREATE DATABASE IF NOT EXISTS library_manager;
 
+USE library_manager
+
 CREATE TABLE `user` (
 userId 		INT AUTO_INCREMENT NOT NULL,
 username 	VARCHAR(50) NOT NULL UNIQUE,
