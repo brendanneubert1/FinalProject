@@ -15,7 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
 import com.example.library_manager.models.Book;
+import com.example.library_manager.models.Rating;
 import com.example.library_manager.models.Review;
+import com.example.library_manager.models.User;
+import com.example.library_manager.services.BookService;
+import com.example.library_manager.services.RatingService;
 
 @Service
 @SessionScope
@@ -27,26 +31,13 @@ public class ReviewService {
     }
 
 
-public boolean makeReview(String userId, String reviewContent, String bookTitle, boolean recommended) {
+public boolean makeReview(String userId, String isbn, String reviewContent, boolean recommended) {
     try (Connection conn = dataSource.getConnection()) {
-
-        // 1. Look up ISBN based on book title
-        String isbn = null;
-        String findBookSql = "SELECT isbn FROM book WHERE title = ?";
-        try (PreparedStatement ps = conn.prepareStatement(findBookSql)) {
-            ps.setString(1, bookTitle);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                isbn = rs.getString("isbn");
-            } else {
-                return false; // No book found
-            }
-        }
-
-      
+    
         String insertSql =
             "INSERT INTO review (userId, bookId, body, created_date, recommended) " +
             "VALUES (?, ?, ?, NOW(), ?)";
+        System.out.println("isbn:" + isbn);
         try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
             ps.setInt(1, Integer.parseInt(userId));
             ps.setString(2, isbn);
@@ -54,9 +45,7 @@ public boolean makeReview(String userId, String reviewContent, String bookTitle,
             ps.setBoolean(4, recommended);
             ps.executeUpdate();
         }
-
         return true;
-
     } catch (Exception e) {
         e.printStackTrace();
         return false;
@@ -70,48 +59,39 @@ public List<Review> getHomeReviews(String loggedInUser) throws SQLException {
 
     String sql =
     "SELECT " +
-    "   r.reviewId, r.userId, r.body, r.recommended, r.created_date, " +
+    "   r.reviewId, r.userId, u.firstName, u.lastName, r.body, r.recommended, r.created_date, " +
     "   b.isbn, b.title, b.imglink, b.category, b.rating, b.num_ratings, b.release_date AS publishDate " +
     "FROM `review` r " +
     "JOIN book b ON r.bookId = b.isbn " +
+    "JOIN `user` u ON u.userId = r.userId " +
     "ORDER BY r.created_date DESC " +
     "LIMIT 20";
 
     try (Connection conn = dataSource.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()) {
 
         while (rs.next()) {
 
-          
+            BookService bookService = new BookService(dataSource, new RatingService(dataSource));
+            Book b = bookService.getBooksByIsbn(rs.getString("isbn"), loggedInUser);
+            User u = new User(
+                String.valueOf(rs.getInt("userId")),
+                rs.getString("firstName"),
+                rs.getString("lastName"));
 
-    Book book = new Book(
-        rs.getString("isbn"),     // isbn
-        rs.getString("title"),    // title
-        new ArrayList<>(),        
-       rs.getString("imglink"),
-        rs.getString("category"),
-        rs.getString("publishDate"), // publishDate
-        0.0f,                     // rating (default)
-        0,                        // numRatings (default)
-        0,                        // heartsCount (default)
-        false,                    // isHearted
-        false,                    // isWishlisted
-        false                     
-    );
+            Review review = new Review(
+                String.valueOf(rs.getLong("reviewId")),
+                u,
+                b,
+                rs.getString("body"),
+                        rs.getBoolean("recommended"),
+                        rs.getTimestamp("created_date").toLocalDateTime()
+                    );
+                    reviews.add(review);
 
-    Review review = new Review(
-        String.valueOf(rs.getLong("reviewId")),
-        String.valueOf(rs.getInt("userId")),
-        book,
-         rs.getString("body"),
-                rs.getBoolean("recommended"),
-                rs.getTimestamp("created_date").toLocalDateTime()
-            );
-            reviews.add(review);
-
-}
         }
+    }
     
 
     return reviews;

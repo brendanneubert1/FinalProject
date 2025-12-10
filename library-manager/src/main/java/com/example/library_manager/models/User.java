@@ -13,7 +13,7 @@ public class User {
     /**
      * Unique identifier for the user.
      */
-    private final String userId;
+    private String userId;
 
     /**
      * First name of the user.
@@ -100,5 +100,8 @@ public class User {
      */
     public String getProfileImagePath() {
         return profileImagePath;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
