@@ -48,6 +48,10 @@ SELECT
         ORDER BY b.title
         LIMIT ? OFFSET ?;
 
+BEFORE: 0.01586625s
+AFTER:  0.00556625s
+
+
 
 
 
