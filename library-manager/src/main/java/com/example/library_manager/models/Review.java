@@ -1,6 +1,7 @@
 package com.example.library_manager.models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 /**
@@ -11,16 +12,16 @@ import java.time.LocalDateTime;
 
 public class Review {
     private String reviewId;
-    private String userId;
+    private User user;
     private Book book;
     private String content;
     private boolean recommended;
     private LocalDateTime reviewDate;
 
     // Constructor
-    public Review(String reviewId, String userId, Book book, String content, boolean recommended, LocalDateTime reviewDate) {
+    public Review(String reviewId, User user, Book book, String content, boolean recommended, LocalDateTime reviewDate) {
         this.reviewId = reviewId;
-        this.userId = userId;
+        this.user = user;
         this.book = book;
         this.content = content;
         this.recommended = recommended;
@@ -32,8 +33,8 @@ public class Review {
         return reviewId;
     }
 
-    public String getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
     public Book getBook() {
@@ -48,8 +49,11 @@ public class Review {
         return recommended;
     }
 
-    public LocalDateTime getReviewDate() {
-        return reviewDate;
+    public String getReviewDate() {
+        LocalDateTime dt = LocalDateTime.parse("2025-12-10T00:15:42");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy h:mm a");
+        String formatted = dt.format(formatter);
+        return formatted;
     }
 
    
@@ -58,7 +62,7 @@ public class Review {
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.user.setUserId(userId);
     }
 
     public void setBook(Book book) {

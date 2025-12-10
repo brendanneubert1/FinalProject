@@ -163,7 +163,7 @@ public class Book {
     public List<Author> getAuthors() {
         return this.authors;
     }
-    public String getImglink() {
+    public String getImgLink() {
         return imglink;
     }
     public String getCategory() {

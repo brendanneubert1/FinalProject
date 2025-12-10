@@ -1,16 +1,16 @@
-<div class="basic-book-result">
+<a href="/book/{{book.isbn}}" class = "browselink"><div class="basic-book-result">
 
     <!-- Title -->
-    <div class="basic-book-title">{{title}}</div>
+    <div class="basic-book-title">{{book.title}}</div>
 
     <!-- Small cover image -->
-    <img class="basic-book-thumb" src="{{imglink}}" alt="{{title}} cover">
+    <img class="basic-book-thumb" src="{{book.imglink}}" alt="{{book.title}} cover">
 
     <!-- Authors -->
     <div class="basic-book-authors">
-        {{#authors}}
+        {{#book.authors}}
             <span class="authorname">{{authorname}}</span>
-        {{/authors}}
+        {{/book.authors}}
     </div>
 
-</div>
+</div> </a>

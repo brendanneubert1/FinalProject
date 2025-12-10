@@ -1,40 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-{{> fragments/html_header}}
+<div class="review-card">
 
-<body>
+    <!-- ===== TOP SECTION: Book Fragment + User/Meta ===== -->
+    <div class="review-header">
 
-{{> fragments/title}}
-{{> fragments/top_bar}}
-
-<div class="container review-page">
-
-    <!-- ===== REVIEW HEADER ===== -->
-    <header class="review-header">
-        <h1>Review by <a class="browselink" href="profile/{{userId}}">{{userName}}</h1>
-        <div class="review-meta">
-            <span class="review-rating">Rating: {{rating}} / 5</span>
-            <span class="review-date"> {{reviewDate}}</span>
+        <!-- LEFT: simple book fragment -->
+        <div class="review-book">
+            {{> fragments/basic_book }}
         </div>
-    </header>
 
-    <hr>
+        <!-- RIGHT: user info and recommended indicator -->
+        <div class="review-meta">
+            <a href="/profile/{{user.userId}}"> <img class="review-user-avatar" src="{{user.profileImagePath}}" alt="User Avatar"> </a>
+            <a href="/profile/{{user.userId}}" class = "browselink"><div class="review-user">{{user.firstName}} {{user.lastName}} </a></div>
 
-    <section class="review-book">
-        {{> fragments/basic_book}}
-    </section>
+            <div class="review-date">{{reviewDate}}</div>
 
-    <hr>
+            <div class="review-recommended">
+                {{#recommended}}
+                    <i class="fa-solid fa-thumbs-up recommended-yes"></i>
+                {{/recommended}}
+                {{^recommended}}
+                    <i class="fa-solid fa-thumbs-down recommended-no"></i>
+                {{/recommended}}
+            </div>
+        </div>
+    </div>
 
-    <!-- ===== REVIEW CONTENT ===== -->
-    <section class="review-content">
-        <h2>Review</h2>
-        <p class="review-text">
-            {{reviewText}}
-        </p>
-    </section>
-
+    <!-- ===== REVIEW BODY ===== -->
+    <div class="review-content">
+        {{content}}
+    </div>
 </div>
-
-</body>
-</html>
