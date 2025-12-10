@@ -80,8 +80,11 @@ public class HomeController {
 
         List<Book> results = bookService.searchBooksByTitle(bookTitle);
 
+        List<Review> reviews = reviewService.getHomeReviews(loggedinUser);
+
         mv.addObject("errorMessage", null);
         mv.addObject("error", null);
+        mv.addObject("reviews", reviews);
 
         // === For the new_review_form fragment ===
         mv.addObject("bookTitle", bookTitle);
