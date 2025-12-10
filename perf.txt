@@ -1,0 +1,54 @@
+CREATE INDEX idx_book_title ON book (title);
+CREATE INDEX idx_book_category ON book (category);
+
+
+SELECT * FROM book B WHERE B.title  LIKE "z%";
+
+SELECT * FROM book B WHERE B.category LIKE "%war%";
+
+| Query_ID | Duration   | Query                                              |
+|        1 | 0.00920800 | SELECT * FROM book WHERE title LIKE 'Harry%'       |
+|        2 | 0.00444225 | SELECT * FROM book B WHERE B.category LIKE "%war%" |
+
+
+
+AFTER INDEXING:
+| Query_ID | Duration   | Query                                              |
+|        3 | 0.00074625 | SELECT * FROM book B WHERE B.title  LIKE "z%"      |
+|        4 | 0.00278550 | SELECT * FROM book B WHERE B.category LIKE "%war%" |
+
+
+Browse query affected by indexing:
+
+SELECT
+            b.isbn,
+            b.title,
+            b.imglink,
+            b.category,
+            b.description,
+            b.release_date AS publishDate,
+            b.rating,
+            b.num_ratings,
+            b.num_pages,
+            COUNT(DISTINCT L.userId) AS likes_count,
+            MAX(CASE WHEN ? = L.userId  THEN 1 ELSE 0 END) AS liked,
+            MAX(CASE WHEN ? = W.userId  THEN 1 ELSE 0 END) AS wishlisted,
+            MAX(CASE WHEN ? = R.userId  THEN 1 ELSE 0 END) AS `read`
+        FROM book b
+        LEFT JOIN written_by wb ON b.isbn = wb.bookId
+        LEFT JOIN author a ON wb.authorId = a.authorId
+        LEFT JOIN likes as L ON b.isbn = L.bookId
+        LEFT JOIN wishlist as W ON b.isbn = W.bookId
+        LEFT JOIN `read` as R ON b.isbn = R.bookId 
+        WHERE (? IS NULL OR b.title LIKE CONCAT('%', ?, '%'))
+        AND (? IS NULL OR b.category LIKE CONCAT('%', ?, '%'))
+        AND (? IS NULL OR a.name LIKE CONCAT('%', ?, '%'))
+        AND b.rating >= ?
+        GROUP BY b.isbn
+        ORDER BY b.title
+        LIMIT ? OFFSET ?;
+
+
+
+
+
