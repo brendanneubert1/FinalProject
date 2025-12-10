@@ -73,11 +73,11 @@ FOREIGN KEY (bookId) REFERENCES book(isbn)
 );
 
 CREATE TABLE likes (
-userId		INT NOT NULL,
-bookId		VARCHAR(20) NOT NULL,
-PRIMARY KEY (userId, bookId),
-FOREIGN KEY (userId) REFERENCES `user`(userId),
-FOREIGN KEY (bookId) REFERENCES book(isbn)
+userId		INT NOT NULL, 
+bookId	 	VARCHAR(20) NOT NULL, 
+PRIMARY KEY (userId, bookId), 
+FOREIGN KEY (userId) REFERENCES `user`(userId), 
+FOREIGN KEY (bookId) REFERENCES book(isbn) 
 );
 
 CREATE TABLE `read` (
